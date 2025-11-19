@@ -624,7 +624,7 @@ function BlockchainMonitorDashboard() {
 // Styles - Light Mode (Arkham-inspired)
 const styles = {
   container: {
-    minHeight: 'calc(100vh - 73px)',
+    minHeight: '100vh',
     background: '#ffffff',
     color: '#111827',
     padding: '32px',

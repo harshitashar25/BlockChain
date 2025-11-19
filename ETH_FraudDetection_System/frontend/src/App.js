@@ -7,6 +7,8 @@ import LeaDashboard from './LeaDashboard';
 import BankA_UI from './BankA_UI';
 import BankB_UI from './BankB_UI';
 import BlockchainMonitorDashboard from './components/BlockchainMonitorDashboard';
+import Sidebar from './components/Sidebar';
+import OSINTPlaceholder from './components/OSINTPlaceholder';
 
 // Import ABI (JSON file is created by Hardhat compile)
 import FraudLedgerABI from './FraudLedger.json'; 
@@ -15,7 +17,7 @@ import FraudLedgerABI from './FraudLedger.json';
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; 
 
 function App() {
-  const [view, setView] = useState('home'); // 'home', 'wallet-intelligence', or 'bank-monitoring'
+  const [view, setView] = useState('wallet-intelligence'); // 'wallet-intelligence', 'bank-monitoring', or 'osint'
   const [contract, setContract] = useState(null);
 
   useEffect(() => {
@@ -53,30 +55,23 @@ function App() {
     setView(newView);
   };
 
-  // Navigation style - Light mode
-  const navStyle = {
+  // Layout wrapper style - accounts for sidebar
+  const layoutStyle = {
     display: 'flex',
-    gap: '8px',
-    padding: '16px 32px',
-    background: '#ffffff',
-    borderBottom: '1px solid #e5e7eb',
-    alignItems: 'center',
+    minHeight: '100vh',
+    background: '#f9fafb'
   };
 
-  const navButtonStyle = (isActive) => ({
-    padding: '10px 20px',
-    fontSize: '14px',
-    background: isActive ? '#2563eb' : 'transparent',
-    color: isActive ? '#ffffff' : '#4b5563',
-    border: isActive ? 'none' : '1px solid #e5e7eb',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontWeight: '600',
-    transition: 'all 0.2s',
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-  });
+  // Main content area style - accounts for sidebar width
+  const mainContentStyle = {
+    marginLeft: '280px',
+    flex: 1,
+    minHeight: '100vh',
+    background: '#f9fafb',
+    width: 'calc(100% - 280px)'
+  };
 
-  // Simple style for a 3-column layout
+  // Simple style for a 3-column layout (Bank Monitoring)
   const appStyle = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr',
@@ -85,149 +80,62 @@ function App() {
     maxWidth: '1400px',
     margin: '0 auto',
     background: '#f9fafb',
-    minHeight: 'calc(100vh - 73px)',
+    minHeight: '100vh'
   };
 
-  // Home Page View
-  if (view === 'home') {
-    return (
-      <div>
-        <div style={navStyle}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginRight: 'auto' }}>
-            <div style={{ fontSize: '20px' }}>🔍</div>
-            <span style={{ fontSize: '16px', fontWeight: '600', color: '#111827' }}>
-              Fraud Traceability System
-            </span>
-          </div>
-          <button 
-            style={navButtonStyle(view === 'wallet-intelligence')}
-            onClick={() => setView('wallet-intelligence')}
-          >
-            Blockchain Transaction Intelligence
-          </button>
-          <button 
-            style={navButtonStyle(view === 'bank-monitoring')}
-            onClick={() => setView('bank-monitoring')}
-          >
-            Cross-Bank Fraud Monitoring
-          </button>
-        </div>
-        <HomePage onNavigate={handleNavigate} />
-      </div>
-    );
-  }
+  // Render content based on view
+  const renderContent = () => {
+    // OSINT View
+    if (view === 'osint') {
+      return <OSINTPlaceholder />;
+    }
 
-  // Wallet Intelligence View (Blockchain Monitor)
-  if (view === 'wallet-intelligence') {
-    return (
-      <div style={{ background: '#f9fafb', minHeight: '100vh' }}>
-        <div style={navStyle}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginRight: 'auto' }}>
-            <div style={{ fontSize: '20px' }}>🔍</div>
-            <span style={{ fontSize: '16px', fontWeight: '600', color: '#111827' }}>
-              Fraud Traceability System
-            </span>
-          </div>
-          <button 
-            style={navButtonStyle(false)}
-            onClick={() => setView('home')}
-          >
-            Home
-          </button>
-          <button 
-            style={navButtonStyle(view === 'wallet-intelligence')}
-            onClick={() => setView('wallet-intelligence')}
-          >
-            Blockchain Transaction Intelligence
-          </button>
-          <button 
-            style={navButtonStyle(view === 'bank-monitoring')}
-            onClick={() => setView('bank-monitoring')}
-          >
-            Cross-Bank Fraud Monitoring
-          </button>
-        </div>
-        <BlockchainMonitorDashboard />
-      </div>
-    );
-  }
+    // Wallet Intelligence View (Blockchain Monitor)
+    if (view === 'wallet-intelligence') {
+      return <BlockchainMonitorDashboard />;
+    }
 
-  // Bank Monitoring View (Fraud Detection System)
-  if (!contract) {
-    return (
-      <div style={{ background: '#f9fafb', minHeight: '100vh' }}>
-        <div style={navStyle}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginRight: 'auto' }}>
-            <div style={{ fontSize: '20px' }}>🔍</div>
-            <span style={{ fontSize: '16px', fontWeight: '600', color: '#111827' }}>
-              Fraud Traceability System
-            </span>
+    // Bank Monitoring View (Fraud Detection System)
+    if (view === 'bank-monitoring') {
+      // Show loading state if contract not ready
+      if (!contract) {
+        return (
+          <div style={{ padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div>
+              <h1 style={{ fontSize: '24px', fontWeight: '600', color: '#111827' }}>
+                Connecting to blockchain...
+              </h1>
+            </div>
           </div>
-          <button 
-            style={navButtonStyle(false)}
-            onClick={() => setView('home')}
-          >
-            Home
-          </button>
-          <button 
-            style={navButtonStyle(view === 'wallet-intelligence')}
-            onClick={() => setView('wallet-intelligence')}
-          >
-            Blockchain Transaction Intelligence
-          </button>
-          <button 
-            style={navButtonStyle(view === 'bank-monitoring')}
-            onClick={() => setView('bank-monitoring')}
-          >
-            Cross-Bank Fraud Monitoring
-          </button>
+        );
+      }
+
+      return (
+        <div style={appStyle}>
+          {/* 1. Bank A (Reporting) UI */}
+          <BankA_UI contract={contract} /> 
+
+          {/* 2. LEA Dashboard (Listening & Freezing) UI */}
+          <LeaDashboard contract={contract} /> 
+
+          {/* 3. Bank B (Receiving/Listening) UI */}
+          <BankB_UI contract={contract} /> 
         </div>
-        <div style={{ padding: '40px', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: '600', color: '#111827' }}>
-            Connecting to blockchain...
-          </h1>
-        </div>
-      </div>
-    );
-  }
+      );
+    }
+
+    // Default fallback
+    return <BlockchainMonitorDashboard />;
+  };
 
   return (
-    <div style={{ background: '#f9fafb', minHeight: '100vh' }}>
-      <div style={navStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginRight: 'auto' }}>
-          <div style={{ fontSize: '20px' }}>🔍</div>
-          <span style={{ fontSize: '16px', fontWeight: '600', color: '#111827' }}>
-            Fraud Traceability System
-          </span>
-        </div>
-        <button 
-          style={navButtonStyle(false)}
-          onClick={() => setView('home')}
-        >
-          Home
-        </button>
-        <button 
-          style={navButtonStyle(view === 'wallet-intelligence')}
-          onClick={() => setView('wallet-intelligence')}
-        >
-          Blockchain Transaction Intelligence
-        </button>
-        <button 
-          style={navButtonStyle(view === 'bank-monitoring')}
-          onClick={() => setView('bank-monitoring')}
-        >
-          Cross-Bank Fraud Monitoring
-        </button>
-      </div>
-      <div style={appStyle}>
-        {/* 1. Bank A (Reporting) UI */}
-        <BankA_UI contract={contract} /> 
-
-        {/* 2. LEA Dashboard (Listening & Freezing) UI */}
-        <LeaDashboard contract={contract} /> 
-
-        {/* 3. Bank B (Receiving/Listening) UI */}
-        <BankB_UI contract={contract} /> 
+    <div style={layoutStyle}>
+      {/* Sidebar Navigation */}
+      <Sidebar activeView={view} onNavigate={handleNavigate} />
+      
+      {/* Main Content Area */}
+      <div style={mainContentStyle} className="main-content-responsive">
+        {renderContent()}
       </div>
     </div>
   );
