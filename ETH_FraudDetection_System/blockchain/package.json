@@ -1,0 +1,19 @@
+{
+  "name": "fraud-ledger-blockchain",
+  "version": "1.0.0",
+  "description": "Blockchain component for Fraud Ledger hackathon MVP",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js --network localhost",
+    "node": "hardhat node"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0"
+  }
+}
+
