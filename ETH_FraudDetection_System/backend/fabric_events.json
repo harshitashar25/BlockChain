@@ -1,0 +1,14 @@
+{
+  "events": [
+    {
+      "type": "FraudReported",
+      "payload": {
+        "case_id": "CASE-TEST-001",
+        "evidence_hash": "hash-1763579362825",
+        "requester": "bank-user-001"
+      },
+      "timestamp": "2025-11-19T19:09:22.858Z",
+      "processed": true
+    }
+  ]
+}

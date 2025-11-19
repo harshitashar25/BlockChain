@@ -35,9 +35,11 @@ router.get('/trace', async (req, res) => {
     });
   } catch (error) {
     console.error('Error in tracer:', error);
+    console.error('Stack:', error.stack);
     res.status(500).json({
       error: 'Failed to trace paths',
-      message: error.message
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
@@ -80,9 +82,11 @@ router.post('/trace', async (req, res) => {
     });
   } catch (error) {
     console.error('Error in tracer:', error);
+    console.error('Stack:', error.stack);
     res.status(500).json({
       error: 'Failed to trace paths',
-      message: error.message
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });

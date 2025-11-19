@@ -1,55 +1,137 @@
 {
-  "description": "Synthetic dataset for Fraud Trail PoC",
+  "description": "Comprehensive synthetic dataset for Fraud Trail PoC - Ready for real data swap",
+  "version": "2.0",
   "utrs": [
     {
       "utr": "UTR123456789",
       "remitter": {
-        "name": "John Doe",
+        "name": "Rajesh Kumar",
         "account": "ACCOUNT123456",
+        "account_hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+        "ifsc": "HDFC0001234",
         "phone": "+91-9876543210",
-        "pan": "ABCDE1234F"
+        "pan": "ABCDE1234F",
+        "pan_token": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
       },
       "amount": 100000,
-      "timestamp": "2024-01-15T10:30:00Z"
+      "currency": "INR",
+      "timestamp": "2024-01-15T10:30:00Z",
+      "downstream": [
+        {
+          "account_hash": "b3a3e5574d1c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b",
+          "amount": 50000,
+          "timestamp": "2024-01-15T11:00:00Z"
+        }
+      ]
     },
     {
       "utr": "UTR987654321",
       "remitter": {
-        "name": "Jane Smith",
+        "name": "Priya Sharma",
         "account": "ACCOUNT789012",
+        "account_hash": "b3a3e5574d1c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b",
+        "ifsc": "ICIC0005678",
         "phone": "+91-9876543211",
-        "pan": "FGHIJ5678K"
+        "pan": "FGHIJ5678K",
+        "pan_token": "b3a3e5574d1c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b"
       },
       "amount": 25000,
-      "timestamp": "2024-01-15T12:00:00Z"
+      "currency": "INR",
+      "timestamp": "2024-01-15T12:00:00Z",
+      "downstream": []
+    },
+    {
+      "utr": "UTR555666777",
+      "remitter": {
+        "name": "Amit Patel",
+        "account": "ACCOUNT555666",
+        "account_hash": "c4b4f6686e2d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d",
+        "ifsc": "SBIN0009999",
+        "phone": "+91-9876543212",
+        "pan": "KLMNO9012P",
+        "pan_token": "c4b4f6686e2d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d"
+      },
+      "amount": 500000,
+      "currency": "INR",
+      "timestamp": "2024-01-15T08:00:00Z",
+      "downstream": [
+        {
+          "account_hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+          "amount": 200000,
+          "timestamp": "2024-01-15T09:00:00Z"
+        }
+      ]
     }
   ],
   "p2p_orders": [
     {
       "order_id": "P2P-ORDER-001",
       "utr": "UTR123456789",
-      "buyer": {
+      "seller_account_hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+      "buyer_kyc": {
         "name": "Alice Crypto",
-        "email": "alice@example.com",
-        "phone": "+91-9876543210"
+        "email": "alice.crypto@protonmail.com",
+        "phone": "+86-13800138000",
+        "nationality": "CN",
+        "kyc_status": "VERIFIED",
+        "kyc_level": "LEVEL_2",
+        "document_hash": "d5c5g7797f3e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e7e",
+        "verified_at": "2024-01-01T00:00:00Z",
+        "exchange_account_token": "EXCHANGE_TOKEN_ALICE_01"
       },
       "withdrawal_wallet": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-      "amount_inr": 100000,
+      "amount": 100000,
+      "currency": "INR",
       "crypto_amount": "0.5",
-      "crypto_currency": "ETH"
+      "crypto_currency": "ETH",
+      "order_timestamp": "2024-01-15T11:30:00Z",
+      "status": "COMPLETED"
     },
     {
       "order_id": "P2P-ORDER-002",
       "utr": "UTR987654321",
-      "buyer": {
+      "seller_account_hash": "b3a3e5574d1c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b",
+      "buyer_kyc": {
         "name": "Bob Trader",
-        "email": "bob@example.com",
-        "phone": "+91-9876543211"
+        "email": "bob.trader@tutanota.com",
+        "phone": "+1-555-123-4567",
+        "nationality": "US",
+        "kyc_status": "VERIFIED",
+        "kyc_level": "LEVEL_1",
+        "document_hash": "e6d6h88a8g4f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f",
+        "verified_at": "2023-12-01T00:00:00Z",
+        "exchange_account_token": "EXCHANGE_TOKEN_BOB_02"
       },
       "withdrawal_wallet": "0x8ba1f109551bD432803012645Hac136c22C9C",
-      "amount_inr": 25000,
+      "amount": 25000,
+      "currency": "INR",
       "crypto_amount": "0.125",
-      "crypto_currency": "ETH"
+      "crypto_currency": "ETH",
+      "order_timestamp": "2024-01-15T13:00:00Z",
+      "status": "COMPLETED"
+    },
+    {
+      "order_id": "P2P-ORDER-003",
+      "utr": "UTR555666777",
+      "seller_account_hash": "c4b4f6686e2d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d",
+      "buyer_kyc": {
+        "name": "Chen Lee",
+        "email": "chen.lee88@protonmail.com",
+        "phone": "+86-13756228890",
+        "nationality": "CN",
+        "kyc_status": "VERIFIED",
+        "kyc_level": "LEVEL_2",
+        "document_hash": "f7e7i99b9h5g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g9g",
+        "verified_at": "2023-11-15T00:00:00Z",
+        "exchange_account_token": "EXCHANGE_TOKEN_CHEN_03"
+      },
+      "withdrawal_wallet": "0x1234567890123456789012345678901234567890",
+      "amount": 500000,
+      "currency": "INR",
+      "crypto_amount": "2.5",
+      "crypto_currency": "ETH",
+      "order_timestamp": "2024-01-15T09:30:00Z",
+      "status": "COMPLETED"
     }
   ],
   "on_chain_transfers": [
@@ -57,21 +139,65 @@
       "event_id": "synthetic-eth-0x742d35-1",
       "chain": "eth",
       "tx_hash": "0xabc123def4567890123456789012345678901234567890123456789012345678",
+      "block_number": 18500000,
       "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
       "to": "0x8ba1f109551bD432803012645Hac136c22C9C",
       "amount": "0.3",
+      "amount_raw": "300000000000000000",
       "token_symbol": "ETH",
-      "timestamp": "2024-01-15T14:00:00Z"
+      "token_name": "Ethereum",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "decimals": 18,
+      "timestamp": "2024-01-15T14:00:00Z",
+      "log_index": 0
     },
     {
       "event_id": "synthetic-eth-0x8ba1f1-1",
       "chain": "eth",
       "tx_hash": "0xdef456abc1237890123456789012345678901234567890123456789012345678",
+      "block_number": 18500001,
       "from": "0x8ba1f109551bD432803012645Hac136c22C9C",
       "to": "0x1234567890123456789012345678901234567890",
       "amount": "0.1",
+      "amount_raw": "100000000000000000",
       "token_symbol": "ETH",
-      "timestamp": "2024-01-15T15:00:00Z"
+      "token_name": "Ethereum",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "decimals": 18,
+      "timestamp": "2024-01-15T15:00:00Z",
+      "log_index": 0
+    },
+    {
+      "event_id": "synthetic-eth-0x123456-1",
+      "chain": "eth",
+      "tx_hash": "0x1112223334445556667778889990001112223334445556667778889990001112",
+      "block_number": 18500002,
+      "from": "0x1234567890123456789012345678901234567890",
+      "to": "0xExchangeHotWallet1234567890123456789012345678",
+      "amount": "2.4",
+      "amount_raw": "2400000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "decimals": 18,
+      "timestamp": "2024-01-15T16:00:00Z",
+      "log_index": 0
+    },
+    {
+      "event_id": "synthetic-eth-exchange-1",
+      "chain": "eth",
+      "tx_hash": "0xExchangeDeposit123456789012345678901234567890123456789012345678901234",
+      "block_number": 18500003,
+      "from": "0xExchangeHotWallet1234567890123456789012345678",
+      "to": "exchange:P2P-ORDER-003",
+      "amount": "2.4",
+      "amount_raw": "2400000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "decimals": 18,
+      "timestamp": "2024-01-15T16:30:00Z",
+      "log_index": 0
     }
   ],
   "bridge_events": [
@@ -80,7 +206,7 @@
       "chain": "eth",
       "tx_hash": "0xlock1234567890123456789012345678901234567890123456789012345678",
       "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-      "bridge_contract": "0xBridgeContract1234567890123456789012345678",
+      "bridge_contract": "0x3ee18B2214AFF97000D974cf647E7C347E8fa585",
       "amount": "0.2",
       "nonce": "NONCE-001",
       "timestamp": "2024-01-15T16:00:00Z"
@@ -90,11 +216,30 @@
       "chain": "bsc",
       "tx_hash": "0xmint1234567890123456789012345678901234567890123456789012345678",
       "to": "0xBSCWallet1234567890123456789012345678901234",
-      "bridge_contract": "0xBridgeContractBSC1234567890123456789012345678",
+      "bridge_contract": "0xB6F6D86a8f9879A9c87f643768d9efb38f1D5cc0",
       "amount": "0.2",
       "nonce": "NONCE-001",
       "timestamp": "2024-01-15T16:05:00Z"
     }
+  ],
+  "exchange_endpoints": [
+    {
+      "exchange_id": "exchange:P2P-ORDER-001",
+      "name": "Binance P2P",
+      "wallet": "0xExchangeHotWallet1234567890123456789012345678",
+      "type": "exchange"
+    },
+    {
+      "exchange_id": "exchange:P2P-ORDER-002",
+      "name": "Coinbase",
+      "wallet": "0xCoinbaseHotWallet1234567890123456789012345678",
+      "type": "exchange"
+    },
+    {
+      "exchange_id": "exchange:P2P-ORDER-003",
+      "name": "KuCoin",
+      "wallet": "0xKuCoinHotWallet1234567890123456789012345678",
+      "type": "exchange"
+    }
   ]
 }
-

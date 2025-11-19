@@ -31,8 +31,21 @@ class Tracer {
       throw new Error('Seed actor ID is required');
     }
 
+    // Test Neo4j connection first
+    try {
+      const isConnected = await this.neo4j.testConnection();
+      if (!isConnected) {
+        throw new Error('Neo4j connection failed');
+      }
+    } catch (error) {
+      throw new Error(`Neo4j connection error: ${error.message}`);
+    }
+
     const timeWindow = hours * 60 * 60 * 1000; // Convert to milliseconds
     const cutoffTime = new Date(Date.now() - timeWindow);
+
+    // Ensure seed actor exists in graph
+    await this.neo4j.upsertActor(seed, { type: this._getActorType(seed) });
 
     // Priority queue: [risk_score * amount, actor_id, path, depth]
     const queue = [[1.0, seed, [seed], 0]];
@@ -43,6 +56,13 @@ class Tracer {
 
     // Track exchange endpoints found
     const exchangeEndpoints = new Set();
+
+    // Add seed node to results
+    nodes.set(seed, {
+      id: seed,
+      type: this._getActorType(seed),
+      risk_score: 0.5
+    });
 
     while (queue.length > 0) {
       // Pop highest priority
@@ -127,32 +147,51 @@ class Tracer {
   async _getOutgoingRelationships(actorId, cutoffTime, minAmt) {
     const session = this.neo4j.driver.session();
     try {
+      // First check if actor exists
+      const checkActor = await session.run(
+        'MATCH (a:Actor {id: $actorId}) RETURN a',
+        { actorId: actorId }
+      );
+
+      if (checkActor.records.length === 0) {
+        console.log(`Actor ${actorId} not found in graph`);
+        return [];
+      }
+
+      // Use a more compatible query - handle timestamp as string
+      const cutoffTimeStr = cutoffTime.toISOString();
       const query = `
         MATCH (from:Actor {id: $actorId})-[r:SENT|BRIDGED]->(to:Actor)
-        WHERE datetime(r.timestamp) >= datetime($cutoffTime)
-          AND r.amount >= $minAmt
-        RETURN to.id as to, r.amount as amount, r.token_symbol as token_symbol,
-               r.chain as chain, r.tx_hash as tx_hash, type(r) as rel_type,
-               r.timestamp as timestamp
-        ORDER BY r.amount DESC
+        WHERE r.timestamp >= $cutoffTime
+          AND toFloat(r.amount) >= $minAmt
+        RETURN to.id as to, toFloat(r.amount) as amount, 
+               COALESCE(r.token_symbol, 'ETH') as token_symbol,
+               COALESCE(r.chain, 'eth') as chain, 
+               COALESCE(r.tx_hash, '') as tx_hash, 
+               type(r) as rel_type,
+               COALESCE(r.timestamp, datetime()) as timestamp
+        ORDER BY toFloat(r.amount) DESC
         LIMIT 50
       `;
 
       const result = await session.run(query, {
         actorId: actorId,
-        cutoffTime: cutoffTime.toISOString(),
-        minAmt: minAmt
+        cutoffTime: cutoffTimeStr,
+        minAmt: parseFloat(minAmt)
       });
 
       return result.records.map(record => ({
         to: record.get('to'),
-        amount: record.get('amount'),
-        token_symbol: record.get('token_symbol'),
-        chain: record.get('chain'),
-        tx_hash: record.get('tx_hash'),
+        amount: record.get('amount') || 0,
+        token_symbol: record.get('token_symbol') || 'ETH',
+        chain: record.get('chain') || 'eth',
+        tx_hash: record.get('tx_hash') || '',
         rel_type: record.get('rel_type'),
-        timestamp: record.get('timestamp')
+        timestamp: record.get('timestamp')?.toString() || new Date().toISOString()
       }));
+    } catch (error) {
+      console.error(`Error getting relationships for ${actorId}:`, error.message);
+      return [];
     } finally {
       await session.close();
     }

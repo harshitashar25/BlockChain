@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 4002;
@@ -9,9 +11,60 @@ const PORT = process.env.PORT || 4002;
 app.use(cors());
 app.use(express.json());
 
-// Mock P2P order database
-const p2pOrders = {
-  'UTR123456789': {
+// Load synthetic dataset (fallback to in-memory if file not found)
+let syntheticData = null;
+const datasetPath = path.join(__dirname, '../../demo/synthetic_dataset.json');
+
+try {
+  if (fs.existsSync(datasetPath)) {
+    syntheticData = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
+    console.log(`✅ Loaded synthetic dataset: ${syntheticData.p2p_orders?.length || 0} P2P orders`);
+  }
+} catch (error) {
+  console.warn('⚠️  Could not load synthetic dataset, using in-memory data');
+}
+
+// Mock P2P order database (can be replaced with real exchange API)
+const p2pOrders = {};
+const utrToOrderMap = {};
+
+// Initialize from synthetic dataset if available
+if (syntheticData && syntheticData.p2p_orders) {
+  syntheticData.p2p_orders.forEach(order => {
+    const orderKey = order.order_id || order.utr;
+    p2pOrders[orderKey] = {
+      order_id: order.order_id,
+      buyer_kyc: order.buyer_kyc || {
+        name: order.buyer?.name || 'Unknown',
+        email: order.buyer?.email || '',
+        phone: order.buyer?.phone || '',
+        kyc_status: 'VERIFIED',
+        kyc_level: 'LEVEL_2',
+        document_hash: crypto.createHash('sha256').update(`KYC-${order.order_id}`).digest('hex'),
+        verified_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      withdrawal_wallet: order.withdrawal_wallet,
+      amount: order.amount || order.amount_inr,
+      currency: order.currency || 'INR',
+      crypto_amount: order.crypto_amount,
+      crypto_currency: order.crypto_currency || 'ETH',
+      order_timestamp: order.order_timestamp || new Date().toISOString(),
+      status: order.status || 'COMPLETED'
+    };
+    
+    // Map UTR to order
+    if (order.utr) {
+      utrToOrderMap[order.utr] = orderKey;
+    }
+    
+    // Map seller account hash to order
+    if (order.seller_account_hash) {
+      utrToOrderMap[order.seller_account_hash] = orderKey;
+    }
+  });
+} else {
+  // Fallback in-memory data
+  p2pOrders['P2P-ORDER-001'] = {
     order_id: 'P2P-ORDER-001',
     buyer_kyc: {
       name: 'Alice Crypto',
@@ -29,38 +82,18 @@ const p2pOrders = {
     crypto_currency: 'ETH',
     order_timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     status: 'COMPLETED'
-  },
-  'UTR987654321': {
-    order_id: 'P2P-ORDER-002',
-    buyer_kyc: {
-      name: 'Bob Trader',
-      email: 'bob@example.com',
-      phone: '+91-9876543211',
-      kyc_status: 'VERIFIED',
-      kyc_level: 'LEVEL_1',
-      document_hash: crypto.createHash('sha256').update('KYC-DOC-002').digest('hex'),
-      verified_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
-    },
-    withdrawal_wallet: '0x8ba1f109551bD432803012645Hac136c22C9C',
-    amount: 25000,
-    currency: 'INR',
-    crypto_amount: '0.125',
-    crypto_currency: 'ETH',
-    order_timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-    status: 'COMPLETED'
-  }
-};
+  };
+  utrToOrderMap['UTR123456789'] = 'P2P-ORDER-001';
+}
 
 // Mock mapping: bank_account_hash -> order
-const accountHashToOrder = {
-  'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3': 'UTR123456789', // hash of ACCOUNT123456
-  'b3a3e5574d1c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b5c5b': 'UTR987654321'  // hash of ACCOUNT789012
-};
+const accountHashToOrder = {};
 
 /**
  * POST /api/exchange/lea/query
  * LEA query endpoint - returns P2P order and buyer KYC
  * Body: { utr } OR { bank_account_hash }
+ * Production: Replace with real exchange LEA API endpoint (requires legal authorization)
  */
 app.post('/api/exchange/lea/query', (req, res) => {
   const { utr, bank_account_hash } = req.body;
@@ -71,28 +104,38 @@ app.post('/api/exchange/lea/query', (req, res) => {
     });
   }
 
-  let orderKey = utr;
+  let orderKey = null;
 
-  // If bank_account_hash provided, look up UTR
-  if (bank_account_hash && !utr) {
-    orderKey = accountHashToOrder[bank_account_hash];
+  // Try to find order by UTR first
+  if (utr) {
+    orderKey = utrToOrderMap[utr];
+  }
+
+  // If not found, try by bank_account_hash
+  if (!orderKey && bank_account_hash) {
+    orderKey = utrToOrderMap[bank_account_hash] || accountHashToOrder[bank_account_hash];
+    
+    // Try partial match (hash suffix)
     if (!orderKey) {
-      return res.status(404).json({
-        ok: false,
-        error: 'No P2P order found for the provided bank account hash',
-        bank_account_hash: bank_account_hash
-      });
+      const hashSuffix = bank_account_hash.split(':').pop();
+      orderKey = Object.keys(utrToOrderMap).find(key => 
+        key.includes(hashSuffix) || hashSuffix.includes(key.split(':').pop())
+      );
+      if (orderKey) {
+        orderKey = utrToOrderMap[orderKey];
+      }
     }
   }
 
   // Look up order
-  const order = p2pOrders[orderKey];
+  const order = orderKey ? p2pOrders[orderKey] : null;
 
   if (!order) {
     return res.status(404).json({
       ok: false,
       error: 'P2P order not found',
-      utr: orderKey
+      utr: utr || null,
+      bank_account_hash: bank_account_hash || null
     });
   }
 
@@ -123,20 +166,21 @@ app.get('/api/exchange/lea/order/:orderId', (req, res) => {
   const { orderId } = req.params;
 
   // Find order by order_id
-  const orderEntry = Object.entries(p2pOrders).find(([_, order]) => order.order_id === orderId);
+  const order = p2pOrders[orderId];
 
-  if (!orderEntry) {
+  if (!order) {
     return res.status(404).json({
       error: 'Order not found',
       order_id: orderId
     });
   }
 
-  const [utr, order] = orderEntry;
+  // Find UTR for this order
+  const utr = Object.keys(utrToOrderMap).find(key => utrToOrderMap[key] === orderId);
 
   res.json({
     ok: true,
-    utr: utr,
+    utr: utr || null,
     order: order
   });
 });
@@ -150,6 +194,7 @@ app.get('/api/exchange/health', (req, res) => {
     ok: true,
     service: 'mock-exchange-adapter',
     version: '1.0.0',
+    mode: process.env.USE_REAL_EXCHANGE_API === 'true' ? 'production' : 'mock',
     order_count: Object.keys(p2pOrders).length
   });
 });
@@ -161,5 +206,6 @@ app.listen(PORT, () => {
   console.log(`📚 Endpoints:`);
   console.log(`   POST /api/exchange/lea/query`);
   console.log(`   GET  /api/exchange/lea/order/:orderId`);
+  console.log(`\n💡 Production swap: Set USE_REAL_EXCHANGE_API=true and configure real exchange LEA endpoint`);
+  console.log(`⚠️  Legal: Real exchange LEA access requires FIR/court order per exchange policy`);
 });
-

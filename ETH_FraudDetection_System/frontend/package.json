@@ -4,13 +4,13 @@
   "description": "Investigator UI for Fraud Trail System",
   "private": true,
   "dependencies": {
+    "antd": "^5.29.1",
+    "axios": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-force-graph-2d": "^1.29.0",
     "react-scripts": "5.0.1",
-    "axios": "^1.6.0",
-    "react-force-graph-2d": "^1.25.4",
-    "antd": "^5.12.0",
-    "socket.io-client": "^4.6.0"
+    "socket.io-client": "^4.8.1"
   },
   "scripts": {
     "start": "react-scripts start",
