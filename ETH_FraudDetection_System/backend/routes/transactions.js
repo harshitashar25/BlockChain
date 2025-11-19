@@ -136,13 +136,23 @@ router.post('/test', async (req, res) => {
 
     // Add activities based on type
     if (type === 'token') {
+      // Support custom token info from request body
+      const tokenContract = req.body.tokenContract || '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'; // Default USDC
+      const tokenSymbol = req.body.tokenSymbol || 'USDC';
+      const tokenDecimals = req.body.tokenDecimals || 6;
+      const tokenValue = req.body.tokenValue || '1000000'; // Default 1 USDC
+      
       activities.push({
         type: 'TOKEN_TRANSFER',
         standard: 'ERC20',
-        contract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC contract
+        contract: tokenContract,
+        symbol: tokenSymbol,
+        tokenSymbol: tokenSymbol,
         from: fromAddress,
         to: toAddress,
-        value: '1000000', // 1 USDC (6 decimals)
+        value: tokenValue,
+        decimals: tokenDecimals,
+        tokenDecimals: tokenDecimals,
         transactionHash: randomHash
       });
     } else if (type === 'nft') {

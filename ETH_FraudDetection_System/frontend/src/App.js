@@ -7,6 +7,7 @@ import LeaDashboard from './LeaDashboard';
 import BankA_UI from './BankA_UI';
 import BankB_UI from './BankB_UI';
 import BlockchainMonitorDashboard from './components/BlockchainMonitorDashboard';
+import TransactionIntelligence from './components/TransactionIntelligence';
 import Sidebar from './components/Sidebar';
 import OSINTPlaceholder from './components/OSINTPlaceholder';
 
@@ -17,7 +18,7 @@ import FraudLedgerABI from './FraudLedger.json';
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; 
 
 function App() {
-  const [view, setView] = useState('wallet-intelligence'); // 'wallet-intelligence', 'bank-monitoring', or 'osint'
+  const [view, setView] = useState('home'); // 'home', 'wallet-intelligence', 'bank-monitoring', or 'osint'
   const [contract, setContract] = useState(null);
 
   useEffect(() => {
@@ -59,7 +60,7 @@ function App() {
   const layoutStyle = {
     display: 'flex',
     minHeight: '100vh',
-    background: '#f9fafb'
+    background: 'var(--arkham-bg-primary)'
   };
 
   // Main content area style - accounts for sidebar width
@@ -67,7 +68,7 @@ function App() {
     marginLeft: '280px',
     flex: 1,
     minHeight: '100vh',
-    background: '#f9fafb',
+    background: 'var(--arkham-bg-primary)',
     width: 'calc(100% - 280px)'
   };
 
@@ -79,20 +80,25 @@ function App() {
     padding: '32px',
     maxWidth: '1400px',
     margin: '0 auto',
-    background: '#f9fafb',
+    background: 'var(--arkham-bg-primary)',
     minHeight: '100vh'
   };
 
   // Render content based on view
   const renderContent = () => {
+    // Home View
+    if (view === 'home') {
+      return <HomePage onNavigate={handleNavigate} />;
+    }
+
     // OSINT View
     if (view === 'osint') {
       return <OSINTPlaceholder />;
     }
 
-    // Wallet Intelligence View (Blockchain Monitor)
+    // Wallet Intelligence View (Transaction Intelligence with Moralis)
     if (view === 'wallet-intelligence') {
-      return <BlockchainMonitorDashboard />;
+      return <TransactionIntelligence />;
     }
 
     // Bank Monitoring View (Fraud Detection System)
@@ -100,9 +106,9 @@ function App() {
       // Show loading state if contract not ready
       if (!contract) {
         return (
-          <div style={{ padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--arkham-bg-primary)' }}>
             <div>
-              <h1 style={{ fontSize: '24px', fontWeight: '600', color: '#111827' }}>
+              <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--arkham-text-primary)' }}>
                 Connecting to blockchain...
               </h1>
             </div>
@@ -125,7 +131,7 @@ function App() {
     }
 
     // Default fallback
-    return <BlockchainMonitorDashboard />;
+    return <HomePage onNavigate={handleNavigate} />;
   };
 
   return (

@@ -1,7 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* FraudNet Intel Dark Theme Colors - Matching Arkham Intel */
+  --arkham-bg-primary: #0a0a0a;
+  --arkham-bg-secondary: #111111;
+  --arkham-bg-tertiary: #1a1a1a;
+  --arkham-bg-card: #151515;
+  --arkham-bg-hover: #1f1f1f;
+  
+  --arkham-text-primary: #ffffff;
+  --arkham-text-secondary: #a0a0a0;
+  --arkham-text-tertiary: #6b6b6b;
+  
+  --arkham-border: #2a2a2a;
+  --arkham-border-light: #3a3a3a;
+  
+  --arkham-accent: #3b82f6;
+  --arkham-accent-hover: #2563eb;
+  --arkham-success: #10b981;
+  --arkham-warning: #f59e0b;
+  --arkham-error: #ef4444;
+  
+  --arkham-green: #10b981;
+  --arkham-red: #ef4444;
+  --arkham-blue: #3b82f6;
 }
 
 body {
@@ -11,8 +39,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #f9fafb;
-  color: #111827;
+  background: var(--arkham-bg-primary);
+  color: var(--arkham-text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 code {
@@ -20,23 +52,23 @@ code {
     monospace;
 }
 
-/* Custom scrollbar for light mode */
+/* Custom scrollbar for dark mode */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f3f4f6;
+  background: var(--arkham-bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: var(--arkham-border-light);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #4a4a4a;
 }
 
 /* Pulse animation for status indicators */
@@ -55,12 +87,61 @@ button {
 }
 
 button:hover:not(:disabled) {
+  opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 button:active:not(:disabled) {
   transform: translateY(0);
+}
+
+/* Input focus styles for dark theme */
+input:focus {
+  outline: none;
+  border-color: var(--arkham-accent) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Link hover effects */
+a:hover {
+  opacity: 0.8;
+}
+
+/* Typography enhancements matching Arkham Intel */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--arkham-text-primary);
+}
+
+h1 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+/* Card styling enhancements */
+.card {
+  background: var(--arkham-bg-card);
+  border: 1px solid var(--arkham-border);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--arkham-border-light);
+}
+
+/* Button enhancements */
+button {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Input field enhancements */
+input, textarea, select {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 /* Responsive sidebar layout */

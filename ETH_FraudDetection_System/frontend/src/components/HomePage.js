@@ -11,73 +11,51 @@ const HomePage = ({ onNavigate }) => {
     if (onNavigate) onNavigate('bank-monitoring');
   };
 
+  const navigateToOSINT = () => {
+    if (onNavigate) onNavigate('osint');
+  };
+
   return (
     <div style={styles.container}>
-      {/* Header */}
-      <header style={styles.header}>
-        <div style={styles.headerContent}>
-          <div style={styles.logoSection}>
-            <div style={styles.logoIcon}>🔍</div>
-            <div>
-              <h1 style={styles.title}>Blockchain-Enabled Financial Fraud Traceability System</h1>
-              <p style={styles.subtitle}>Real-time cross-institution fraud detection and fund tracing</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section style={styles.hero}>
         <div style={styles.heroContent}>
           <div style={styles.heroText}>
-            <h2 style={styles.heroTitle}>Combat Financial Fraud with Blockchain Intelligence</h2>
+            <h1 style={styles.heroTitle}>Welcome to FraudNet Intel</h1>
             <p style={styles.heroDescription}>
-              A permissioned blockchain-powered system that traces fraudulent financial transactions 
-              across banks and wallets in real time and automatically freezes funds if flagged.
+              Track both on-chain and off-chain financial transactions with comprehensive 
+              blockchain analytics, cross-institution fraud monitoring, and real-time intelligence.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Problem Statement Section */}
-      <section style={styles.section}>
-        <div style={styles.sectionContent}>
-          <div style={styles.problemCard}>
-            <div style={styles.iconWrapper}>
-              <div style={styles.icon}>✓</div>
-            </div>
-            <div style={styles.cardContent}>
-              <h3 style={styles.cardTitle}>Problem Statement</h3>
-              <p style={styles.cardText}>
-                Create a permissioned blockchain-powered system that traces fraudulent financial 
-                transactions across banks and wallets in real time and automatically freezes funds if flagged.
-              </p>
-            </div>
-          </div>
-
-          <div style={styles.problemCard}>
-            <div style={{...styles.iconWrapper, background: '#fee2e2'}}>
-              <div style={{...styles.icon, color: '#dc2626'}}>✓</div>
-            </div>
-            <div style={styles.cardContent}>
-              <h3 style={styles.cardTitle}>Why India Needs This</h3>
-              <p style={styles.cardText}>
-                Cybercriminals often move stolen funds across multiple accounts and wallets within minutes. 
-                A blockchain-based shared ledger can provide instant cross-institution visibility.
-              </p>
-            </div>
-          </div>
-
-          <div style={styles.problemCard}>
-            <div style={{...styles.iconWrapper, background: '#fef3c7'}}>
-              <div style={{...styles.icon, color: '#d97706'}}>✓</div>
-            </div>
-            <div style={styles.cardContent}>
-              <h3 style={styles.cardTitle}>Expected Output</h3>
-              <p style={styles.cardText}>
-                A cross-bank fraud-trail dashboard mapping illicit fund flow and triggering 
-                smart alerts for enforcement authorities.
-              </p>
+            <div style={styles.heroButtons}>
+              <button 
+                style={styles.primaryButton}
+                onClick={navigateToWallet}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'var(--arkham-accent-hover)';
+                  e.target.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'var(--arkham-accent)';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                Explore Analytics
+              </button>
+              <button 
+                style={styles.secondaryButton}
+                onClick={() => window.open('https://github.com', '_blank')}
+                onMouseEnter={(e) => {
+                  e.target.style.background = '#eab308';
+                  e.target.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'var(--arkham-warning)';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                Documentation
+                <span style={styles.externalIcon}>↗</span>
+              </button>
             </div>
           </div>
         </div>
@@ -86,7 +64,7 @@ const HomePage = ({ onNavigate }) => {
       {/* Features Grid */}
       <section style={styles.featuresSection}>
         <div style={styles.featuresContent}>
-          <h2 style={styles.sectionTitle}>System Capabilities</h2>
+          <h2 style={styles.sectionTitle}>Platform Capabilities</h2>
           <div style={styles.featuresGrid}>
             <div 
               style={{
@@ -100,10 +78,11 @@ const HomePage = ({ onNavigate }) => {
               <div style={styles.featureIcon}>🔗</div>
               <h3 style={styles.featureTitle}>Blockchain Transaction Intelligence</h3>
               <p style={styles.featureDescription}>
-                Real-time monitoring and analysis of cryptocurrency wallet transactions, 
-                token transfers, and contract interactions across blockchain networks.
+                Advanced on-chain analytics for cryptocurrency wallets, token transfers, 
+                NFT movements, and cross-chain bridge transactions. Real-time monitoring 
+                with comprehensive transaction trail visualization.
               </p>
-              <div style={styles.featureLink}>Explore →</div>
+              <div style={styles.featureBadge}>Available</div>
             </div>
 
             <div 
@@ -118,10 +97,80 @@ const HomePage = ({ onNavigate }) => {
               <div style={styles.featureIcon}>🏦</div>
               <h3 style={styles.featureTitle}>Cross-Bank Fraud Monitoring</h3>
               <p style={styles.featureDescription}>
-                Track fraudulent transactions across multiple banking institutions, 
-                report fraud cases, and execute automated fund freezing protocols.
+                Permissioned blockchain system for tracking fraudulent transactions across 
+                multiple banking institutions. Automated fund freezing protocols and 
+                real-time cross-institution visibility.
               </p>
-              <div style={styles.featureLink}>Explore →</div>
+              <div style={styles.featureBadge}>Available</div>
+            </div>
+
+            <div 
+              style={{
+                ...styles.featureCard,
+                ...(hoveredCard === 'osint' ? styles.featureCardHover : {})
+              }}
+              onClick={navigateToOSINT}
+              onMouseEnter={() => setHoveredCard('osint')}
+              onMouseLeave={() => setHoveredCard(null)}
+            >
+              <div style={styles.featureIcon}>🔍</div>
+              <h3 style={styles.featureTitle}>OSINT Intelligence</h3>
+              <p style={styles.featureDescription}>
+                Open Source Intelligence gathering and analysis for comprehensive 
+                threat assessment and entity profiling across multiple data sources.
+              </p>
+              <div style={styles.featureBadgeComingSoon}>COMING SOON</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Key Features Section */}
+      <section style={styles.keyFeaturesSection}>
+        <div style={styles.keyFeaturesContent}>
+          <h2 style={styles.sectionTitle}>Key Features</h2>
+          <div style={styles.keyFeaturesGrid}>
+            <div style={styles.keyFeatureItem}>
+              <div style={styles.keyFeatureIcon}>⚡</div>
+              <h4 style={styles.keyFeatureTitle}>Real-Time Monitoring</h4>
+              <p style={styles.keyFeatureText}>
+                Live transaction tracking across blockchain networks with instant alerts
+              </p>
+            </div>
+            <div style={styles.keyFeatureItem}>
+              <div style={styles.keyFeatureIcon}>🌉</div>
+              <h4 style={styles.keyFeatureTitle}>Cross-Chain Analysis</h4>
+              <p style={styles.keyFeatureText}>
+                Track value flows across multiple chains and bridge transactions
+              </p>
+            </div>
+            <div style={styles.keyFeatureItem}>
+              <div style={styles.keyFeatureIcon}>🔐</div>
+              <h4 style={styles.keyFeatureTitle}>Permissioned Access</h4>
+              <p style={styles.keyFeatureText}>
+                Secure, role-based access control for financial institutions
+              </p>
+            </div>
+            <div style={styles.keyFeatureItem}>
+              <div style={styles.keyFeatureIcon}>📊</div>
+              <h4 style={styles.keyFeatureTitle}>Advanced Analytics</h4>
+              <p style={styles.keyFeatureText}>
+                Graph visualization, transaction trails, and pattern detection
+              </p>
+            </div>
+            <div style={styles.keyFeatureItem}>
+              <div style={styles.keyFeatureIcon}>🛡️</div>
+              <h4 style={styles.keyFeatureTitle}>Automated Responses</h4>
+              <p style={styles.keyFeatureText}>
+                Smart contract-based fund freezing and fraud prevention
+              </p>
+            </div>
+            <div style={styles.keyFeatureItem}>
+              <div style={styles.keyFeatureIcon}>🔗</div>
+              <h4 style={styles.keyFeatureTitle}>Multi-Asset Support</h4>
+              <p style={styles.keyFeatureText}>
+                Track ETH, tokens, NFTs, and cross-chain swaps
+              </p>
             </div>
           </div>
         </div>
@@ -131,20 +180,20 @@ const HomePage = ({ onNavigate }) => {
       <section style={styles.statsSection}>
         <div style={styles.statsContent}>
           <div style={styles.statItem}>
+            <div style={styles.statNumber}>24/7</div>
+            <div style={styles.statLabel}>Continuous Monitoring</div>
+          </div>
+          <div style={styles.statItem}>
+            <div style={styles.statNumber}>Multi-Chain</div>
+            <div style={styles.statLabel}>Network Coverage</div>
+          </div>
+          <div style={styles.statItem}>
             <div style={styles.statNumber}>Real-Time</div>
-            <div style={styles.statLabel}>Transaction Monitoring</div>
+            <div style={styles.statLabel}>Transaction Alerts</div>
           </div>
           <div style={styles.statItem}>
-            <div style={styles.statNumber}>Cross-Institution</div>
-            <div style={styles.statLabel}>Visibility</div>
-          </div>
-          <div style={styles.statItem}>
-            <div style={styles.statNumber}>Automated</div>
-            <div style={styles.statLabel}>Fund Freezing</div>
-          </div>
-          <div style={styles.statItem}>
-            <div style={styles.statNumber}>Blockchain</div>
-            <div style={styles.statLabel}>Immutable Records</div>
+            <div style={styles.statNumber}>Immutable</div>
+            <div style={styles.statLabel}>Blockchain Records</div>
           </div>
         </div>
       </section>
@@ -152,196 +201,194 @@ const HomePage = ({ onNavigate }) => {
   );
 };
 
+// Styles - Dark Theme matching Arkham Intel
 const styles = {
   container: {
     minHeight: '100vh',
-    background: '#ffffff',
+    background: 'var(--arkham-bg-primary)',
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-  },
-  header: {
-    borderBottom: '1px solid #e5e7eb',
-    background: '#ffffff',
-    padding: '24px 0',
-  },
-  headerContent: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '0 32px',
-  },
-  logoSection: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '16px',
-  },
-  logoIcon: {
-    fontSize: '32px',
-    width: '48px',
-    height: '48px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#f3f4f6',
-    borderRadius: '12px',
-  },
-  title: {
-    fontSize: '24px',
-    fontWeight: '600',
-    color: '#111827',
-    margin: 0,
-    lineHeight: '1.2',
-  },
-  subtitle: {
-    fontSize: '14px',
-    color: '#6b7280',
-    margin: '4px 0 0 0',
-    fontWeight: '400',
+    padding: '0',
   },
   hero: {
-    background: 'linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)',
-    padding: '80px 0',
-    borderBottom: '1px solid #e5e7eb',
+    background: 'var(--arkham-bg-primary)',
+    padding: '80px 32px',
+    borderBottom: '1px solid var(--arkham-border)',
   },
   heroContent: {
     maxWidth: '1200px',
     margin: '0 auto',
-    padding: '0 32px',
+    textAlign: 'center',
   },
   heroText: {
     maxWidth: '800px',
+    margin: '0 auto',
   },
   heroTitle: {
     fontSize: '48px',
-    fontWeight: '700',
-    color: '#111827',
+    fontWeight: '800',
+    color: 'var(--arkham-text-primary)',
     margin: '0 0 24px 0',
     lineHeight: '1.1',
-    letterSpacing: '-0.02em',
+    letterSpacing: '-0.03em',
   },
   heroDescription: {
-    fontSize: '20px',
-    color: '#4b5563',
+    fontSize: '18px',
+    color: 'var(--arkham-text-secondary)',
     lineHeight: '1.6',
-    margin: 0,
+    margin: '0 0 40px 0',
     fontWeight: '400',
   },
-  section: {
-    padding: '80px 0',
-    background: '#ffffff',
-  },
-  sectionContent: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '0 32px',
+  heroButtons: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '24px',
+    gap: '16px',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
   },
-  problemCard: {
-    display: 'flex',
-    gap: '20px',
-    padding: '32px',
-    background: '#ffffff',
-    border: '1px solid #e5e7eb',
-    borderRadius: '16px',
+  primaryButton: {
+    padding: '14px 32px',
+    fontSize: '14px',
+    fontWeight: '600',
+    background: 'var(--arkham-accent)',
+    color: 'var(--arkham-text-primary)',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
     transition: 'all 0.2s',
   },
-  iconWrapper: {
-    width: '48px',
-    height: '48px',
-    borderRadius: '12px',
-    background: '#dbeafe',
+  secondaryButton: {
+    padding: '14px 32px',
+    fontSize: '14px',
+    fontWeight: '600',
+    background: 'var(--arkham-warning)',
+    color: 'var(--arkham-text-primary)',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
+    gap: '8px',
   },
-  icon: {
-    fontSize: '24px',
-    color: '#2563eb',
-    fontWeight: '600',
-  },
-  cardContent: {
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: '20px',
-    fontWeight: '600',
-    color: '#111827',
-    margin: '0 0 12px 0',
-  },
-  cardText: {
+  externalIcon: {
     fontSize: '16px',
-    color: '#4b5563',
-    lineHeight: '1.6',
-    margin: 0,
+    opacity: 0.8,
   },
   featuresSection: {
-    padding: '80px 0',
-    background: '#f9fafb',
+    padding: '80px 32px',
+    background: 'var(--arkham-bg-primary)',
   },
   featuresContent: {
     maxWidth: '1200px',
     margin: '0 auto',
-    padding: '0 32px',
   },
   sectionTitle: {
-    fontSize: '36px',
+    fontSize: '32px',
     fontWeight: '700',
-    color: '#111827',
+    color: 'var(--arkham-text-primary)',
     margin: '0 0 48px 0',
     textAlign: 'center',
     letterSpacing: '-0.02em',
   },
   featuresGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
     gap: '24px',
   },
   featureCard: {
-    padding: '40px',
-    background: '#ffffff',
-    border: '1px solid #e5e7eb',
-    borderRadius: '16px',
+    padding: '32px',
+    background: 'var(--arkham-bg-card)',
+    border: '1px solid var(--arkham-border)',
+    borderRadius: '12px',
     cursor: 'pointer',
-    transition: 'all 0.2s',
-    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+    transition: 'all 0.3s ease',
+    position: 'relative',
   },
   featureCardHover: {
-    borderColor: '#2563eb',
-    boxShadow: '0 4px 12px 0 rgba(37, 99, 235, 0.15)',
-    transform: 'translateY(-2px)',
+    borderColor: 'var(--arkham-accent)',
+    transform: 'translateY(-4px)',
+    boxShadow: '0 8px 24px rgba(59, 130, 246, 0.15)',
   },
   featureIcon: {
-    fontSize: '48px',
+    fontSize: '40px',
     marginBottom: '20px',
   },
   featureTitle: {
-    fontSize: '24px',
+    fontSize: '20px',
     fontWeight: '600',
-    color: '#111827',
+    color: 'var(--arkham-text-primary)',
     margin: '0 0 12px 0',
   },
   featureDescription: {
-    fontSize: '16px',
-    color: '#4b5563',
+    fontSize: '14px',
+    color: 'var(--arkham-text-secondary)',
     lineHeight: '1.6',
     margin: '0 0 20px 0',
   },
-  featureLink: {
+  featureBadge: {
+    display: 'inline-block',
+    padding: '6px 12px',
+    fontSize: '12px',
+    fontWeight: '600',
+    background: 'rgba(16, 185, 129, 0.1)',
+    color: 'var(--arkham-success)',
+    borderRadius: '4px',
+    border: '1px solid rgba(16, 185, 129, 0.2)',
+  },
+  featureBadgeComingSoon: {
+    display: 'inline-block',
+    padding: '6px 12px',
+    fontSize: '12px',
+    fontWeight: '600',
+    background: 'rgba(107, 107, 107, 0.1)',
+    color: 'var(--arkham-text-tertiary)',
+    borderRadius: '4px',
+    border: '1px solid rgba(107, 107, 107, 0.2)',
+  },
+  keyFeaturesSection: {
+    padding: '80px 32px',
+    background: 'var(--arkham-bg-secondary)',
+    borderTop: '1px solid var(--arkham-border)',
+    borderBottom: '1px solid var(--arkham-border)',
+  },
+  keyFeaturesContent: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+  },
+  keyFeaturesGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '24px',
+  },
+  keyFeatureItem: {
+    padding: '24px',
+    background: 'var(--arkham-bg-card)',
+    border: '1px solid var(--arkham-border)',
+    borderRadius: '8px',
+    textAlign: 'center',
+  },
+  keyFeatureIcon: {
+    fontSize: '32px',
+    marginBottom: '16px',
+  },
+  keyFeatureTitle: {
     fontSize: '16px',
     fontWeight: '600',
-    color: '#2563eb',
-    cursor: 'pointer',
+    color: 'var(--arkham-text-primary)',
+    margin: '0 0 8px 0',
+  },
+  keyFeatureText: {
+    fontSize: '13px',
+    color: 'var(--arkham-text-secondary)',
+    lineHeight: '1.5',
+    margin: 0,
   },
   statsSection: {
-    padding: '60px 0',
-    background: '#ffffff',
-    borderTop: '1px solid #e5e7eb',
+    padding: '60px 32px',
+    background: 'var(--arkham-bg-primary)',
   },
   statsContent: {
     maxWidth: '1200px',
     margin: '0 auto',
-    padding: '0 32px',
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
     gap: '40px',
@@ -352,12 +399,12 @@ const styles = {
   statNumber: {
     fontSize: '32px',
     fontWeight: '700',
-    color: '#111827',
+    color: 'var(--arkham-text-primary)',
     marginBottom: '8px',
   },
   statLabel: {
-    fontSize: '14px',
-    color: '#6b7280',
+    fontSize: '13px',
+    color: 'var(--arkham-text-secondary)',
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
@@ -365,4 +412,3 @@ const styles = {
 };
 
 export default HomePage;
-

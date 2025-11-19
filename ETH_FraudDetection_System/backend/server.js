@@ -14,6 +14,7 @@ const transactionRoutes = require('./routes/transactions');
 const webhookRoutes = require('./routes/webhooks');
 const blockchainRoutes = require('./routes/blockchain');
 const trailRoutes = require('./routes/trail');
+const intelligenceRoutes = require('./routes/intelligence');
 
 const app = express();
 const server = http.createServer(app);
@@ -113,6 +114,7 @@ app.use('/api/transactions', transactionRoutes.router);
 app.use('/api/webhooks', webhookRoutes.router);
 app.use('/api/blockchain', blockchainRoutes.router);
 app.use('/api/trail', trailRoutes.router);
+app.use('/api/intelligence', intelligenceRoutes.router);
 
 // Health check
 app.get('/health', (req, res) => {

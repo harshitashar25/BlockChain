@@ -26,6 +26,9 @@ class TransactionTrail {
     const fromLower = from.toLowerCase();
     const toLower = to.toLowerCase();
 
+    // Extract token information from activities
+    const tokenInfo = this.extractTokenInfo(activities);
+
     // Store transaction
     const transaction = {
       hash,
@@ -36,7 +39,13 @@ class TransactionTrail {
       blockNumber,
       timestamp,
       activities: activities || [],
-      type: this.getTransactionType(activities)
+      type: this.getTransactionType(activities),
+      // Token information
+      tokenContract: tokenInfo.contract || null,
+      tokenSymbol: tokenInfo.symbol || null,
+      tokenValue: tokenInfo.value || null,
+      tokenDecimals: tokenInfo.decimals || null,
+      isTokenTransfer: tokenInfo.isToken || false
     };
 
     this.transactions.push(transaction);
@@ -56,7 +65,14 @@ class TransactionTrail {
       value,
       valueEth: txData.valueEth || '0',
       timestamp,
-      blockNumber
+      blockNumber,
+      // Token information
+      tokenContract: tokenInfo.contract || null,
+      tokenSymbol: tokenInfo.symbol || null,
+      tokenValue: tokenInfo.value || null,
+      tokenDecimals: tokenInfo.decimals || null,
+      isTokenTransfer: tokenInfo.isToken || false,
+      transactionType: this.getTransactionType(activities)
     });
 
     // Add incoming connection
@@ -66,8 +82,38 @@ class TransactionTrail {
       value,
       valueEth: txData.valueEth || '0',
       timestamp,
-      blockNumber
+      blockNumber,
+      // Token information
+      tokenContract: tokenInfo.contract || null,
+      tokenSymbol: tokenInfo.symbol || null,
+      tokenValue: tokenInfo.value || null,
+      tokenDecimals: tokenInfo.decimals || null,
+      isTokenTransfer: tokenInfo.isToken || false,
+      transactionType: this.getTransactionType(activities)
     });
+  }
+
+  /**
+   * Extract token information from activities
+   */
+  extractTokenInfo(activities) {
+    if (!activities || activities.length === 0) {
+      return { isToken: false };
+    }
+
+    const tokenActivity = activities.find(a => a.type === 'TOKEN_TRANSFER');
+    if (!tokenActivity) {
+      return { isToken: false };
+    }
+
+    return {
+      isToken: true,
+      contract: tokenActivity.contract || null,
+      symbol: tokenActivity.symbol || tokenActivity.tokenSymbol || null,
+      value: tokenActivity.value || null,
+      decimals: tokenActivity.decimals || tokenActivity.tokenDecimals || 18,
+      standard: tokenActivity.standard || 'ERC20'
+    };
   }
 
   /**
@@ -120,7 +166,14 @@ class TransactionTrail {
               value: tx.valueEth,
               timestamp: tx.timestamp,
               blockNumber: tx.blockNumber,
-              direction: 'outgoing'
+              direction: 'outgoing',
+              // Token information
+              transactionType: tx.transactionType || 'ETH',
+              tokenContract: tx.tokenContract || null,
+              tokenSymbol: tx.tokenSymbol || null,
+              tokenValue: tx.tokenValue || null,
+              tokenDecimals: tx.tokenDecimals || null,
+              isTokenTransfer: tx.isTokenTransfer || false
             }];
             
             trail.paths.push(newPath);
@@ -146,7 +199,14 @@ class TransactionTrail {
               value: tx.valueEth,
               timestamp: tx.timestamp,
               blockNumber: tx.blockNumber,
-              direction: 'incoming'
+              direction: 'incoming',
+              // Token information
+              transactionType: tx.transactionType || 'ETH',
+              tokenContract: tx.tokenContract || null,
+              tokenSymbol: tx.tokenSymbol || null,
+              tokenValue: tx.tokenValue || null,
+              tokenDecimals: tx.tokenDecimals || null,
+              isTokenTransfer: tx.isTokenTransfer || false
             }];
             
             trail.paths.push(newPath);
@@ -337,7 +397,14 @@ class TransactionTrail {
               hash: tx.hash,
               value: tx.valueEth,
               timestamp: tx.timestamp,
-              blockNumber: tx.blockNumber
+              blockNumber: tx.blockNumber,
+              // Token information
+              transactionType: tx.transactionType || 'ETH',
+              tokenContract: tx.tokenContract || null,
+              tokenSymbol: tx.tokenSymbol || null,
+              tokenValue: tx.tokenValue || null,
+              tokenDecimals: tx.tokenDecimals || null,
+              isTokenTransfer: tx.isTokenTransfer || false
             }]
           };
         }
@@ -351,7 +418,14 @@ class TransactionTrail {
               hash: tx.hash,
               value: tx.valueEth,
               timestamp: tx.timestamp,
-              blockNumber: tx.blockNumber
+              blockNumber: tx.blockNumber,
+              // Token information
+              transactionType: tx.transactionType || 'ETH',
+              tokenContract: tx.tokenContract || null,
+              tokenSymbol: tx.tokenSymbol || null,
+              tokenValue: tx.tokenValue || null,
+              tokenDecimals: tx.tokenDecimals || null,
+              isTokenTransfer: tx.isTokenTransfer || false
             }]
           });
         }
@@ -407,7 +481,14 @@ class TransactionTrail {
           hash: tx.hash,
           value: tx.valueEth,
           timestamp: tx.timestamp,
-          blockNumber: tx.blockNumber
+          blockNumber: tx.blockNumber,
+          // Token information
+          transactionType: tx.transactionType || 'ETH',
+          tokenContract: tx.tokenContract || null,
+          tokenSymbol: tx.tokenSymbol || null,
+          tokenValue: tx.tokenValue || null,
+          tokenDecimals: tx.tokenDecimals || null,
+          isTokenTransfer: tx.isTokenTransfer || false
         });
 
         explore(tx.to, depth + 1);
