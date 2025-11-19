@@ -25,18 +25,46 @@ function InvestigatorTrace() {
         // Extract address
         const address = seed.startsWith('chain:') ? seed.replace('chain:', '') : seed;
         
-        // Use Moralis to fetch real data and trace
-        // Use more lenient parameters for better results
-        const response = await axios.post(`${API_BASE}/api/moralis/trace-from-address`, {
-          address: address,
-          chain: 'eth',
-          depth: values.depth || 6,
-          hours: values.hours || 168, // 7 days instead of 48 hours
-          minAmt: Math.min(values.minAmt || 0.01, 0.01) // Lower threshold (0.01 ETH)
-        });
+        // Check if we should use mock data or real Moralis data
+        // For addresses in our mock dataset, prefer using graph data first
+        const mockAddresses = [
+          '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
+          '0xd4fe23d3f98AD0bdAC21Cd2d93100EE6055A49',
+          '0xfeaaed0e3f98AD0bdAC21Cd2d93100EE6055A49',
+          '0x8888888888888888888888888888888888888888',
+          '0x9999999999999999999999999999999999999999'
+        ];
         
-        result = response.data.trace;
-        message.success(`Fetched ${response.data.fetched} transfers from Moralis, ingested ${response.data.ingested}. Found ${result.total_paths} paths.`);
+        const isMockAddress = mockAddresses.some(addr => 
+          address.toLowerCase() === addr.toLowerCase()
+        );
+        
+        if (isMockAddress) {
+          // Use graph data (mock dataset should be ingested)
+          message.info('Using mock dataset data. Make sure mock data is seeded first.');
+          const response = await axios.get(`${API_BASE}/api/tracer/trace`, {
+            params: {
+              seed: seed.startsWith('chain:') ? seed : `chain:${seed}`,
+              depth: values.depth || 6,
+              hours: values.hours || 168,
+              minAmt: values.minAmt || 0.01
+            }
+          });
+          result = response.data.result;
+          message.success(`Found ${result.total_paths} paths using mock dataset`);
+        } else {
+          // Use Moralis to fetch real data and trace
+          const response = await axios.post(`${API_BASE}/api/moralis/trace-from-address`, {
+            address: address,
+            chain: 'eth',
+            depth: values.depth || 6,
+            hours: values.hours || 168,
+            minAmt: Math.min(values.minAmt || 0.01, 0.01)
+          });
+          
+          result = response.data.trace;
+          message.success(`Fetched ${response.data.fetched} transfers from Moralis, ingested ${response.data.ingested}. Found ${result.total_paths} paths.`);
+        }
       } else {
         // Regular trace (assumes data already in graph)
         const response = await axios.get(`${API_BASE}/api/tracer/trace`, {

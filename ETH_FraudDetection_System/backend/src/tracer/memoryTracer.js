@@ -1,11 +1,12 @@
-const MemoryGraphClient = require('../graph/memoryGraphClient');
+const { getSharedGraph } = require('../graph/sharedMemoryGraph');
 
 /**
  * Tracer using in-memory graph (alternative to Neo4j)
  */
 class MemoryTracer {
   constructor() {
-    this.graph = new MemoryGraphClient();
+    // Use shared graph instance so data persists across requests
+    this.graph = getSharedGraph();
   }
 
   async trace(options) {

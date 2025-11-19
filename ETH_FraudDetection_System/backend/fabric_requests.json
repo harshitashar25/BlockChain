@@ -19,6 +19,45 @@
       "freeze_active": false,
       "approvals": [],
       "asset_refs": []
+    },
+    {
+      "case_id": "CASE-FREEZE-TEST-001",
+      "evidence_hash": "hash-1763588797213",
+      "requester": "bank-user-001",
+      "created_at": "2025-11-19T21:46:37.226Z",
+      "status": "FREEZE_ACTIVE",
+      "freeze_active": true,
+      "approvals": [
+        "lea-approver-001",
+        "LEA:IndiaCyber-1763592204577",
+        "LEA:IndiaCyber-1763592252659"
+      ],
+      "asset_refs": [
+        "bank:victim_hash_001_abc123def456",
+        "exchange:P2P-FREEZE-001",
+        "chain:0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+      ]
+    },
+    {
+      "case_id": "CASE-FREEZE-TEST-002",
+      "evidence_hash": "sha256:test-CASE-FREEZE-TEST-002",
+      "requester": "bank:HDFC",
+      "requestedBy": "bank:HDFC",
+      "created_at": "2025-11-19T22:10:57.815Z",
+      "status": "FREEZE_ACTIVE",
+      "freeze_active": true,
+      "approvals": [
+        "lea-approver-001",
+        "LEA:IndiaCyber-1763590398887",
+        "LEA:IndiaCyber-1763590400085"
+      ],
+      "requiredApprovals": 3,
+      "asset_refs": [
+        "bank:victim_hash_002_def456ghi789",
+        "exchange:P2P-FREEZE-002",
+        "chain:0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+      ],
+      "severity": "medium"
     }
   ]
 }

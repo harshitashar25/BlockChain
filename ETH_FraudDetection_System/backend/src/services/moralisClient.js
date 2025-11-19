@@ -129,6 +129,30 @@ class MoralisClient {
   _generateSyntheticTransfers(address, chain) {
     console.log(`📝 Generating synthetic transfers for ${address} on ${chain}`);
     
+    const normalizedAddr = address.toLowerCase();
+    
+    // Check if this is a test wallet from complete mock dataset
+    const mockDatasetPath = require('path').join(__dirname, '../../demo/complete_mock_dataset.json');
+    let mockTransfers = [];
+    
+    try {
+      const fs = require('fs');
+      if (fs.existsSync(mockDatasetPath)) {
+        const mockData = JSON.parse(fs.readFileSync(mockDatasetPath, 'utf8'));
+        const relevantTransfers = mockData.blockchain_transfers.filter(t => 
+          t.from.toLowerCase() === normalizedAddr || t.to.toLowerCase() === normalizedAddr
+        );
+        
+        if (relevantTransfers.length > 0) {
+          console.log(`   ✅ Found ${relevantTransfers.length} mock transfers for ${normalizedAddr.slice(0, 10)}...`);
+          return relevantTransfers;
+        }
+      }
+    } catch (error) {
+      // Fall through to default synthetic
+    }
+    
+    // Default synthetic transfer
     const synthetic = [
       {
         event_id: `synthetic-${chain}-${address.slice(0, 10)}-1`,
@@ -162,6 +186,28 @@ class MoralisClient {
   async getNativeTransfers(address, chain = 'eth', options = {}) {
     if (!this.apiKey) {
       return this._generateSyntheticTransfers(address, chain);
+    }
+    
+    // Also check for mock data even if API key exists (for testing)
+    const normalizedAddr = address.toLowerCase();
+    const mockDatasetPath = require('path').join(__dirname, '../../demo/complete_mock_dataset.json');
+    
+    try {
+      const fs = require('fs');
+      if (fs.existsSync(mockDatasetPath)) {
+        const mockData = JSON.parse(fs.readFileSync(mockDatasetPath, 'utf8'));
+        const relevantTransfers = mockData.blockchain_transfers.filter(t => 
+          (t.from.toLowerCase() === normalizedAddr || t.to.toLowerCase() === normalizedAddr) &&
+          t.token_address === '0x0000000000000000000000000000000000000000'
+        );
+        
+        if (relevantTransfers.length > 0) {
+          console.log(`   ✅ Using ${relevantTransfers.length} mock native transfers for ${normalizedAddr.slice(0, 10)}...`);
+          return relevantTransfers;
+        }
+      }
+    } catch (error) {
+      // Continue to API call
     }
 
     try {

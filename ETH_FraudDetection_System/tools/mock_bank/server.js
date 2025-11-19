@@ -13,15 +13,20 @@ app.use(express.json());
 
 // Load synthetic dataset (fallback to in-memory if file not found)
 let syntheticData = null;
+// Try complete mock dataset first, then fallback to synthetic_dataset.json
+const completeDatasetPath = path.join(__dirname, '../../demo/complete_mock_dataset.json');
 const datasetPath = path.join(__dirname, '../../demo/synthetic_dataset.json');
 
 try {
-  if (fs.existsSync(datasetPath)) {
+  if (fs.existsSync(completeDatasetPath)) {
+    syntheticData = JSON.parse(fs.readFileSync(completeDatasetPath, 'utf8'));
+    console.log(`✅ Loaded complete mock dataset: ${syntheticData.utrs?.length || 0} UTRs`);
+  } else if (fs.existsSync(datasetPath)) {
     syntheticData = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
     console.log(`✅ Loaded synthetic dataset: ${syntheticData.utrs?.length || 0} UTRs`);
   }
 } catch (error) {
-  console.warn('⚠️  Could not load synthetic dataset, using in-memory data');
+  console.warn('⚠️  Could not load dataset, using in-memory data');
 }
 
 // In-memory store for UTR data (mock database - can be replaced with real DB)

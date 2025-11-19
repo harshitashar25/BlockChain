@@ -49,10 +49,29 @@ class AutomatedTracingService {
 
     try {
       // Step 1: Query Bank Adapter for UTR details
-      console.log(`📋 Step 1: Fetching UTR details from bank...`);
-      const bankResponse = await axios.get(`${this.bankUrl}/api/bank/utr/${utr}`);
+      console.log(`📋 Step 1: Fetching UTR details from bank (${this.bankUrl})...`);
+      let bankResponse;
+      try {
+        bankResponse = await axios.get(`${this.bankUrl}/api/bank/utr/${utr}`, {
+          timeout: 10000
+        });
+      } catch (bankError) {
+        if (bankError.code === 'ECONNREFUSED') {
+          throw new Error(`Bank adapter not reachable at ${this.bankUrl}. Is mock_bank server running?`);
+        }
+        throw new Error(`Bank adapter error: ${bankError.message}`);
+      }
+
+      if (!bankResponse.data || !bankResponse.data.payload) {
+        throw new Error(`Invalid bank response: ${JSON.stringify(bankResponse.data)}`);
+      }
+
       const bankData = bankResponse.data.payload;
       
+      if (!bankData.remitter || !bankData.remitter.account_hash) {
+        throw new Error(`Bank data missing remitter or account_hash`);
+      }
+
       traceResult.steps.bank = {
         utr: bankData.utr,
         remitter: bankData.remitter,
@@ -64,14 +83,32 @@ class AutomatedTracingService {
       console.log(`✅ Bank data retrieved: ${bankData.remitter.name}, Account: ${bankData.remitter.account_hash}`);
 
       // Step 2: Query Exchange Adapter for P2P order
-      console.log(`📋 Step 2: Querying exchange for P2P order...`);
-      const exchangeResponse = await axios.post(`${this.exchangeUrl}/api/exchange/lea/query`, {
-        utr: utr,
-        bank_account_hash: bankData.remitter.account_hash
-      });
+      console.log(`📋 Step 2: Querying exchange for P2P order (${this.exchangeUrl})...`);
+      let exchangeResponse;
+      try {
+        exchangeResponse = await axios.post(`${this.exchangeUrl}/api/exchange/lea/query`, {
+          utr: utr,
+          bank_account_hash: bankData.remitter.account_hash
+        }, {
+          timeout: 10000
+        });
+      } catch (exchangeError) {
+        if (exchangeError.code === 'ECONNREFUSED') {
+          throw new Error(`Exchange adapter not reachable at ${this.exchangeUrl}. Is mock_exchange server running?`);
+        }
+        throw new Error(`Exchange adapter error: ${exchangeError.message}`);
+      }
+
+      if (!exchangeResponse.data || !exchangeResponse.data.order) {
+        throw new Error(`Exchange returned no order for UTR ${utr}. Response: ${JSON.stringify(exchangeResponse.data)}`);
+      }
 
       const exchangeData = exchangeResponse.data.order;
       const walletAddress = exchangeData.withdrawal_wallet;
+
+      if (!walletAddress) {
+        throw new Error(`Exchange order missing withdrawal_wallet`);
+      }
 
       traceResult.steps.exchange = {
         order_id: exchangeData.order_id,

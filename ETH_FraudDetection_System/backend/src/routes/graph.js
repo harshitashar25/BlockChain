@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const Neo4jClient = require('../graph/neo4jClient');
+const { getSharedGraph } = require('../graph/sharedMemoryGraph');
+require('dotenv').config();
 
-const neo4j = new Neo4jClient();
+// Use memory graph if enabled, otherwise Neo4j
+const USE_MEMORY = process.env.USE_MEMORY_GRAPH === 'true' || !process.env.NEO4J_URI;
+const graphClient = USE_MEMORY ? getSharedGraph() : new Neo4jClient();
 
 /**
  * POST /api/graph/ingest
@@ -18,7 +22,7 @@ router.post('/ingest', async (req, res) => {
       });
     }
 
-    const result = await neo4j.ingestTransferEvent(transferEvent);
+    const result = await graphClient.ingestTransferEvent(transferEvent);
 
     res.json({
       ok: true,
@@ -47,7 +51,7 @@ router.post('/stitch/bank', async (req, res) => {
       });
     }
 
-    const result = await neo4j.stitchIdentity(bankAccountHash, walletAddress);
+    const result = await graphClient.stitchIdentity(bankAccountHash, walletAddress);
 
     res.json({
       ok: true,
@@ -76,7 +80,7 @@ router.post('/stitch/exchange', async (req, res) => {
       });
     }
 
-    const result = await neo4j.stitchExchangeIdentity(exchangeOrderId, walletAddress);
+    const result = await graphClient.stitchExchangeIdentity(exchangeOrderId, walletAddress);
 
     res.json({
       ok: true,
@@ -98,7 +102,7 @@ router.post('/stitch/exchange', async (req, res) => {
 router.get('/actor/:actorId', async (req, res) => {
   try {
     const { actorId } = req.params;
-    const actor = await neo4j.getActor(actorId);
+    const actor = await graphClient.getActor(actorId);
 
     if (!actor) {
       return res.status(404).json({
@@ -126,7 +130,7 @@ router.get('/actor/:actorId', async (req, res) => {
  */
 router.get('/health', async (req, res) => {
   try {
-    const isConnected = await neo4j.testConnection();
+    const isConnected = USE_MEMORY ? true : await graphClient.testConnection();
     res.json({
       ok: isConnected,
       service: 'neo4j-graph',

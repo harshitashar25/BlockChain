@@ -19,6 +19,54 @@
       },
       "timestamp": "2025-11-19T21:07:38.805Z",
       "processed": true
+    },
+    {
+      "type": "FraudReported",
+      "payload": {
+        "case_id": "CASE-FREEZE-TEST-001",
+        "evidence_hash": "hash-1763588797213",
+        "requester": "bank-user-001"
+      },
+      "timestamp": "2025-11-19T21:46:37.226Z",
+      "processed": true
+    },
+    {
+      "type": "FraudReported",
+      "payload": {
+        "case_id": "CASE-FREEZE-TEST-002",
+        "evidence_hash": "sha256:test-CASE-FREEZE-TEST-002",
+        "requester": "bank:HDFC"
+      },
+      "timestamp": "2025-11-19T22:10:57.817Z",
+      "processed": true
+    },
+    {
+      "type": "FreezeActivated",
+      "payload": {
+        "case_id": "CASE-FREEZE-TEST-002",
+        "asset_refs": [
+          "bank:victim_hash_002_def456ghi789",
+          "exchange:P2P-FREEZE-002",
+          "chain:0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+        ],
+        "evidence_hash": "sha256:test-CASE-FREEZE-TEST-002"
+      },
+      "timestamp": "2025-11-19T22:13:20.088Z",
+      "processed": true
+    },
+    {
+      "type": "FreezeActivated",
+      "payload": {
+        "case_id": "CASE-FREEZE-TEST-001",
+        "asset_refs": [
+          "bank:victim_hash_001_abc123def456",
+          "exchange:P2P-FREEZE-001",
+          "chain:0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+        ],
+        "evidence_hash": "hash-1763588797213"
+      },
+      "timestamp": "2025-11-19T22:44:12.663Z",
+      "processed": true
     }
   ]
 }

@@ -1,0 +1,352 @@
+{
+  "description": "Complete mock dataset for end-to-end freeze testing - All connections linked",
+  "version": "3.0",
+  "created_for": "Complete freeze flow testing with final destination tracing",
+  
+  "utrs": [
+    {
+      "utr": "UTR-FREEZE-001",
+      "remitter": {
+        "name": "Victim User",
+        "account": "VICTIM-ACCOUNT-001",
+        "account_hash": "victim_hash_001_abc123def456",
+        "ifsc": "HDFC0001234",
+        "phone": "+91-9876543201",
+        "pan": "VICTIM1234A",
+        "pan_token": "victim_pan_token_001"
+      },
+      "amount": 500000,
+      "currency": "INR",
+      "timestamp": "2025-01-15T10:00:00Z",
+      "downstream": [
+        {
+          "account_hash": "mule_hash_001_xyz789",
+          "amount": 500000,
+          "timestamp": "2025-01-15T10:05:00Z"
+        }
+      ]
+    },
+    {
+      "utr": "UTR-FREEZE-002",
+      "remitter": {
+        "name": "Another Victim",
+        "account": "VICTIM-ACCOUNT-002",
+        "account_hash": "victim_hash_002_def456ghi789",
+        "ifsc": "ICIC0005678",
+        "phone": "+91-9876543202",
+        "pan": "VICTIM5678B",
+        "pan_token": "victim_pan_token_002"
+      },
+      "amount": 750000,
+      "currency": "INR",
+      "timestamp": "2025-01-15T11:00:00Z",
+      "downstream": [
+        {
+          "account_hash": "mule_hash_002_abc123",
+          "amount": 750000,
+          "timestamp": "2025-01-15T11:05:00Z"
+        }
+      ]
+    }
+  ],
+
+  "p2p_orders": [
+    {
+      "order_id": "P2P-FREEZE-001",
+      "utr": "UTR-FREEZE-001",
+      "seller_account_hash": "mule_hash_001_xyz789",
+      "buyer_kyc": {
+        "name": "Scammer Crypto Buyer",
+        "email": "scammer@example.com",
+        "phone": "+91-9999999999",
+        "kyc_status": "VERIFIED",
+        "kyc_level": "LEVEL_2",
+        "document_hash": "scammer_kyc_doc_001",
+        "verified_at": "2025-01-10T00:00:00Z"
+      },
+      "withdrawal_wallet": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "amount": 500000,
+      "amount_inr": 500000,
+      "currency": "INR",
+      "crypto_amount": "2.5",
+      "crypto_currency": "ETH",
+      "order_timestamp": "2025-01-15T10:10:00Z",
+      "status": "COMPLETED"
+    },
+    {
+      "order_id": "P2P-FREEZE-002",
+      "utr": "UTR-FREEZE-002",
+      "seller_account_hash": "mule_hash_002_abc123",
+      "buyer_kyc": {
+        "name": "Another Scammer",
+        "email": "scammer2@example.com",
+        "phone": "+91-9999999998",
+        "kyc_status": "VERIFIED",
+        "kyc_level": "LEVEL_2",
+        "document_hash": "scammer_kyc_doc_002",
+        "verified_at": "2025-01-10T00:00:00Z"
+      },
+      "withdrawal_wallet": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "amount": 750000,
+      "amount_inr": 750000,
+      "currency": "INR",
+      "crypto_amount": "3.75",
+      "crypto_currency": "ETH",
+      "order_timestamp": "2025-01-15T11:10:00Z",
+      "status": "COMPLETED"
+    }
+  ],
+
+  "blockchain_transfers": [
+    {
+      "event_id": "transfer-001",
+      "chain": "eth",
+      "tx_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+      "block_number": 18500000,
+      "timestamp": "2025-01-15T10:15:00Z",
+      "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "to": "0xd4fe23d3f98AD0bdAC21Cd2d93100EE6055A49",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "amount": "2.5",
+      "amount_raw": "2500000000000000000",
+      "decimals": 18,
+      "log_index": 0,
+      "source": "mock"
+    },
+    {
+      "event_id": "transfer-002",
+      "chain": "eth",
+      "tx_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+      "block_number": 18500001,
+      "timestamp": "2025-01-15T10:20:00Z",
+      "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "to": "0x1153bb14d3f98AD0bdAC21Cd2d93100EE6055A49",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "amount": "0.5",
+      "amount_raw": "500000000000000000",
+      "decimals": 18,
+      "log_index": 0,
+      "source": "mock"
+    },
+    {
+      "event_id": "transfer-003",
+      "chain": "eth",
+      "tx_hash": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "block_number": 18500002,
+      "timestamp": "2025-01-15T10:25:00Z",
+      "from": "0xd4fe23d3f98AD0bdAC21Cd2d93100EE6055A49",
+      "to": "0xfeaaed0e3f98AD0bdAC21Cd2d93100EE6055A49",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "amount": "2.0",
+      "amount_raw": "2000000000000000000",
+      "decimals": 18,
+      "log_index": 0,
+      "source": "mock"
+    },
+    {
+      "event_id": "transfer-004",
+      "chain": "eth",
+      "tx_hash": "0x4444444444444444444444444444444444444444444444444444444444444444",
+      "block_number": 18500003,
+      "timestamp": "2025-01-15T10:30:00Z",
+      "from": "0xfeaaed0e3f98AD0bdAC21Cd2d93100EE6055A49",
+      "to": "0x8888888888888888888888888888888888888888",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "amount": "1.5",
+      "amount_raw": "1500000000000000000",
+      "decimals": 18,
+      "log_index": 0,
+      "source": "mock"
+    },
+    {
+      "event_id": "transfer-005",
+      "chain": "eth",
+      "tx_hash": "0x5555555555555555555555555555555555555555555555555555555555555555",
+      "block_number": 18500004,
+      "timestamp": "2025-01-15T10:35:00Z",
+      "from": "0x8888888888888888888888888888888888888888",
+      "to": "0x9999999999999999999999999999999999999999",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "amount": "1.0",
+      "amount_raw": "1000000000000000000",
+      "decimals": 18,
+      "log_index": 0,
+      "source": "mock"
+    },
+    {
+      "event_id": "transfer-006",
+      "chain": "eth",
+      "tx_hash": "0x6666666666666666666666666666666666666666666666666666666666666666",
+      "block_number": 18500005,
+      "timestamp": "2025-01-15T10:40:00Z",
+      "from": "0x9999999999999999999999999999999999999999",
+      "to": "exchange:binance_deposit_wallet",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "amount": "0.8",
+      "amount_raw": "800000000000000000",
+      "decimals": 18,
+      "log_index": 0,
+      "source": "mock"
+    },
+    {
+      "event_id": "transfer-007",
+      "chain": "eth",
+      "tx_hash": "0x7777777777777777777777777777777777777777777777777777777777777777",
+      "block_number": 18500006,
+      "timestamp": "2025-01-15T11:20:00Z",
+      "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "to": "0xd4fe23d3f98AD0bdAC21Cd2d93100EE6055A49",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "amount": "3.75",
+      "amount_raw": "3750000000000000000",
+      "decimals": 18,
+      "log_index": 0,
+      "source": "mock"
+    },
+    {
+      "event_id": "transfer-008",
+      "chain": "eth",
+      "tx_hash": "0x8888888888888888888888888888888888888888888888888888888888888888",
+      "block_number": 18500007,
+      "timestamp": "2025-01-15T11:25:00Z",
+      "from": "0xd4fe23d3f98AD0bdAC21Cd2d93100EE6055A49",
+      "to": "0xfeaaed0e3f98AD0bdAC21Cd2d93100EE6055A49",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "amount": "3.0",
+      "amount_raw": "3000000000000000000",
+      "decimals": 18,
+      "log_index": 0,
+      "source": "mock"
+    },
+    {
+      "event_id": "transfer-009",
+      "chain": "eth",
+      "tx_hash": "0x9999999999999999999999999999999999999999999999999999999999999999",
+      "block_number": 18500008,
+      "timestamp": "2025-01-15T11:30:00Z",
+      "from": "0xfeaaed0e3f98AD0bdAC21Cd2d93100EE6055A49",
+      "to": "exchange:coinbase_deposit_wallet",
+      "token_address": "0x0000000000000000000000000000000000000000",
+      "token_symbol": "ETH",
+      "token_name": "Ethereum",
+      "amount": "2.5",
+      "amount_raw": "2500000000000000000",
+      "decimals": 18,
+      "log_index": 0,
+      "source": "mock"
+    }
+  ],
+
+  "final_destinations": [
+    {
+      "address": "exchange:binance_deposit_wallet",
+      "type": "exchange",
+      "name": "Binance Deposit Wallet",
+      "description": "Final destination - funds cashed out here",
+      "amount_received": "0.8 ETH",
+      "timestamp": "2025-01-15T10:40:00Z"
+    },
+    {
+      "address": "exchange:coinbase_deposit_wallet",
+      "type": "exchange",
+      "name": "Coinbase Deposit Wallet",
+      "description": "Final destination - funds cashed out here",
+      "amount_received": "2.5 ETH",
+      "timestamp": "2025-01-15T11:30:00Z"
+    }
+  ],
+
+  "fraud_trail_summary": {
+    "utr_freeze_001": {
+      "utr": "UTR-FREEZE-001",
+      "victim_account": "VICTIM-ACCOUNT-001",
+      "mule_account": "mule_hash_001_xyz789",
+      "exchange_order": "P2P-FREEZE-001",
+      "withdrawal_wallet": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "intermediate_wallets": [
+        "0xd4fe23d3f98AD0bdAC21Cd2d93100EE6055A49",
+        "0xfeaaed0e3f98AD0bdAC21Cd2d93100EE6055A49",
+        "0x8888888888888888888888888888888888888888",
+        "0x9999999999999999999999999999999999999999"
+      ],
+      "final_destination": "exchange:binance_deposit_wallet",
+      "total_amount": "2.5 ETH",
+      "final_amount": "0.8 ETH",
+      "path_length": 6
+    },
+    "utr_freeze_002": {
+      "utr": "UTR-FREEZE-002",
+      "victim_account": "VICTIM-ACCOUNT-002",
+      "mule_account": "mule_hash_002_abc123",
+      "exchange_order": "P2P-FREEZE-002",
+      "withdrawal_wallet": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "intermediate_wallets": [
+        "0xd4fe23d3f98AD0bdAC21Cd2d93100EE6055A49",
+        "0xfeaaed0e3f98AD0bdAC21Cd2d93100EE6055A49"
+      ],
+      "final_destination": "exchange:coinbase_deposit_wallet",
+      "total_amount": "3.75 ETH",
+      "final_amount": "2.5 ETH",
+      "path_length": 4
+    }
+  },
+
+  "freeze_test_cases": [
+    {
+      "case_id": "CASE-FREEZE-TEST-001",
+      "utr": "UTR-FREEZE-001",
+      "description": "Complete freeze test case - traces to Binance exchange",
+      "expected_assets": [
+        "bank:mule_hash_001_xyz789",
+        "exchange:P2P-FREEZE-001",
+        "chain:0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+        "chain:0xd4fe23d3f98AD0bdAC21Cd2d93100EE6055A49",
+        "chain:0xfeaaed0e3f98AD0bdAC21Cd2d93100EE6055A49",
+        "chain:0x8888888888888888888888888888888888888888",
+        "chain:0x9999999999999999999999999999999999999999",
+        "exchange:binance_deposit_wallet"
+      ],
+      "final_destination": "exchange:binance_deposit_wallet"
+    },
+    {
+      "case_id": "CASE-FREEZE-TEST-002",
+      "utr": "UTR-FREEZE-002",
+      "description": "Complete freeze test case - traces to Coinbase exchange",
+      "expected_assets": [
+        "bank:mule_hash_002_abc123",
+        "exchange:P2P-FREEZE-002",
+        "chain:0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+        "chain:0xd4fe23d3f98AD0bdAC21Cd2d93100EE6055A49",
+        "chain:0xfeaaed0e3f98AD0bdAC21Cd2d93100EE6055A49",
+        "exchange:coinbase_deposit_wallet"
+      ],
+      "final_destination": "exchange:coinbase_deposit_wallet"
+    }
+  ],
+
+  "usage_instructions": {
+    "step_1": "Submit case with UTR-FREEZE-001 or UTR-FREEZE-002",
+    "step_2": "Run automated trace - will find all connected assets",
+    "step_3": "Request freeze - system will freeze all assets in the trail",
+    "step_4": "Approve 3 times - freeze activates",
+    "step_5": "All assets frozen including final destination exchanges",
+    "note": "This dataset creates a complete trail: UTR → Bank → Exchange → Wallet → Intermediate Wallets → Final Exchange"
+  }
+}
+

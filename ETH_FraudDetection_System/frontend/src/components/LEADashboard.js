@@ -136,34 +136,15 @@ function LEADashboard() {
     try {
       message.info('Running automated trace... This may take a minute.');
       
-      // Run automated trace
-      const traceResponse = await axios.post(`${API_BASE}/api/automated-trace/utr-with-assets`, {
-        utr: utr,
-        chain: 'eth',
-        depth: 6,
-        hours: 168
+      // Use the new trace-and-update endpoint that updates the case directly
+      const traceResponse = await axios.post(`${API_BASE}/api/freeze/trace-and-update`, {
+        caseId: caseId,
+        utr: utr
       });
 
       if (traceResponse.data.asset_refs && traceResponse.data.asset_refs.length > 0) {
-        // Get case to get evidence hash
-        const caseResponse = await axios.get(`${API_BASE}/api/fabric/case/${caseId}`);
-        const caseObj = caseResponse.data.case;
-        
-        if (!caseObj) {
-          throw new Error('Case not found');
-        }
-
-        // Request freeze with asset references
-        await axios.post(`${API_BASE}/api/freeze/request`, {
-          caseId: caseId,
-          evidenceHash: caseObj.evidence_hash,
-          requestedBy: 'LEA:IndiaCyber',
-          severity: 'high',
-          assetRefs: traceResponse.data.asset_refs
-        });
-
-        message.success(`✅ Trace completed! Found ${traceResponse.data.asset_refs.length} asset references. Freeze requested.`);
-        fetchCases();
+        message.success(`✅ Trace completed! Found ${traceResponse.data.asset_refs.length} asset references. Case updated.`);
+        fetchCases(); // Refresh to show updated case with assets
       } else {
         message.warning('Trace completed but no asset references found.');
       }
@@ -282,8 +263,16 @@ function LEADashboard() {
               type="primary"
               danger
               icon={<StopOutlined />}
-              onClick={() => {
-                setSelectedCase(record);
+              onClick={async () => {
+                // Refresh case data before showing modal
+                try {
+                  const response = await axios.get(`${API_BASE}/api/fabric/cases`);
+                  const allCases = response.data.cases || [];
+                  const updatedCase = allCases.find(c => c.case_id === record.case_id);
+                  setSelectedCase(updatedCase || record);
+                } catch (error) {
+                  setSelectedCase(record);
+                }
                 setFreezeModalVisible(true);
               }}
             >
@@ -529,12 +518,54 @@ function LEADashboard() {
       <Modal
         title="Request Freeze"
         visible={freezeModalVisible}
-        onCancel={() => setFreezeModalVisible(false)}
-        onOk={() => {
-          if (selectedCase && selectedCase.asset_refs && selectedCase.asset_refs.length > 0) {
-            handleRequestFreeze(selectedCase.case_id, selectedCase.asset_refs);
-          } else {
-            message.warning('No asset references found for this case');
+        onCancel={() => {
+          setFreezeModalVisible(false);
+          fetchCases(); // Refresh case data
+        }}
+        onOk={async () => {
+          // Refresh case data first to get latest asset_refs
+          try {
+            const response = await axios.get(`${API_BASE}/api/fabric/cases`);
+            const allCases = response.data.cases || [];
+            const updatedCase = allCases.find(c => c.case_id === selectedCase.case_id);
+            
+            if (updatedCase && updatedCase.asset_refs && updatedCase.asset_refs.length > 0) {
+              handleRequestFreeze(updatedCase.case_id, updatedCase.asset_refs);
+            } else {
+              // If no assets, prompt to run trace
+              Modal.confirm({
+                title: 'No Asset References Found',
+                content: 'This case has no asset references. Would you like to run a trace first?',
+                onOk: async () => {
+                  setFreezeModalVisible(false);
+                  // Prompt for UTR
+                  Modal.confirm({
+                    title: 'Run Trace',
+                    content: (
+                      <Input
+                        placeholder="Enter UTR number"
+                        id="utr-input-trace"
+                        onPressEnter={(e) => {
+                          const utr = e.target.value;
+                          if (utr) {
+                            Modal.destroy();
+                            handleRunTrace(selectedCase.case_id, utr);
+                          }
+                        }}
+                      />
+                    ),
+                    onOk: () => {
+                      const input = document.getElementById('utr-input-trace');
+                      if (input && input.value) {
+                        handleRunTrace(selectedCase.case_id, input.value);
+                      }
+                    }
+                  });
+                }
+              });
+            }
+          } catch (error) {
+            message.error('Failed to check case status: ' + error.message);
           }
         }}
         confirmLoading={loading}
@@ -558,7 +589,13 @@ function LEADashboard() {
                       <Tag key={idx}>{ref}</Tag>
                     ))
                   ) : (
-                    <Text type="secondary">No assets to freeze</Text>
+                    <div>
+                      <Text type="secondary">No assets to freeze</Text>
+                      <br />
+                      <Text type="secondary" style={{ fontSize: '12px' }}>
+                        Click "Run Trace" button first to get asset references from UTR.
+                      </Text>
+                    </div>
                   )}
                 </Space>
               </Descriptions.Item>
