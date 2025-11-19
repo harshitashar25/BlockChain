@@ -1,0 +1,41 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/harshita_shar25/Documents/ETH_FraudDetection_System/ETH_FraudDetection_System/blockchain/contracts/FraudLedger.sol": {
+      "lastModificationDate": 1763543613343,
+      "contentHash": "024e407808824dd54cf35533120e8f59",
+      "sourceName": "contracts/FraudLedger.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "FraudLedger"
+      ]
+    }
+  }
+}

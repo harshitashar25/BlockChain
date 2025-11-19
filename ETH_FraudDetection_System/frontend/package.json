@@ -1,18 +1,19 @@
 {
-  "name": "fraud-ledger-frontend",
-  "version": "0.1.0",
+  "name": "fraud-trail-investigator-ui",
+  "version": "1.0.0",
+  "description": "Investigator UI for Fraud Trail System",
   "private": true,
   "dependencies": {
-    "d3": "^7.9.0",
-    "ethers": "^5.7.2",
-    "moralis": "^2.27.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-force-graph-2d": "^1.29.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "axios": "^1.6.0",
+    "react-force-graph-2d": "^1.25.4",
+    "antd": "^5.12.0",
+    "socket.io-client": "^4.6.0"
   },
   "scripts": {
-    "start": "set PORT=3001 && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

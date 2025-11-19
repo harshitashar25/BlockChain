@@ -1,0 +1,63 @@
+{
+  "description": "Registry of known bridge contracts and their event signatures",
+  "bridges": [
+    {
+      "name": "Wormhole",
+      "chains": {
+        "eth": {
+          "lock_contract": "0x3ee18B2214AFF97000D974cf647E7C347E8fa585",
+          "lock_event": "TransferRedeemed",
+          "lock_event_signature": "TransferRedeemed(uint256,uint256,bytes32,uint8,address,uint256)"
+        },
+        "bsc": {
+          "mint_contract": "0xB6F6D86a8f9879A9c87f643768d9efb38f1D5cc0",
+          "mint_event": "TransferRedeemed",
+          "mint_event_signature": "TransferRedeemed(uint256,uint256,bytes32,uint8,address,uint256)"
+        }
+      },
+      "match_fields": ["nonce", "amount"],
+      "amount_tolerance": 0.01
+    },
+    {
+      "name": "Multichain",
+      "chains": {
+        "eth": {
+          "lock_contract": "0x4f3Aff3A747fCADe12598081e80c6605A8be192F",
+          "lock_event": "LogLock",
+          "lock_event_signature": "LogLock(address,address,uint256,uint256)"
+        },
+        "bsc": {
+          "mint_contract": "0x4f3Aff3A747fCADe12598081e80c6605A8be192F",
+          "mint_event": "LogMint",
+          "mint_event_signature": "LogMint(address,address,uint256,uint256)"
+        }
+      },
+      "match_fields": ["txid", "amount"],
+      "amount_tolerance": 0.01
+    },
+    {
+      "name": "Anyswap",
+      "chains": {
+        "eth": {
+          "lock_contract": "0x6b7a87899490EcE95443e979cA9485CBE7E71522",
+          "lock_event": "LogAnySwapOut",
+          "lock_event_signature": "LogAnySwapOut(address,address,uint256,uint256,uint256)"
+        },
+        "bsc": {
+          "mint_contract": "0x6b7a87899490EcE95443e979cA9485CBE7E71522",
+          "mint_event": "LogAnySwapIn",
+          "mint_event_signature": "LogAnySwapIn(bytes32,address,address,uint256,uint256)"
+        }
+      },
+      "match_fields": ["txid", "amount"],
+      "amount_tolerance": 0.01
+    }
+  ],
+  "heuristics": {
+    "enable_unknown_bridge_detection": true,
+    "time_window_seconds": 300,
+    "amount_tolerance": 0.05,
+    "min_amount_threshold": 0.1
+  }
+}
+

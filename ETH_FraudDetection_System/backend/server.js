@@ -139,11 +139,11 @@ app.get('/', (req, res) => {
       webhooks: '/api/webhooks',
       blockchain: '/api/blockchain'
     },
-    websocket: 'ws://localhost:' + (process.env.PORT || 5000)
+    websocket: 'ws://localhost:' + (process.env.PORT || 5001)
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Initialize wallet tracker and start server
 async function start() {

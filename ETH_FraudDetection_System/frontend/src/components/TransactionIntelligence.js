@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
 function TransactionIntelligence() {
   const [address, setAddress] = useState('');
@@ -89,7 +89,7 @@ function TransactionIntelligence() {
     } catch (err) {
       console.error('Error fetching intelligence:', err);
       if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-        setError('Cannot connect to backend server. Please make sure the backend is running on port 5000.');
+        setError('Cannot connect to backend server. Please make sure the backend is running on port 5001.');
       } else {
         setError(err.message || 'Failed to fetch transaction intelligence');
       }

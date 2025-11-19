@@ -1,0 +1,100 @@
+{
+  "description": "Synthetic dataset for Fraud Trail PoC",
+  "utrs": [
+    {
+      "utr": "UTR123456789",
+      "remitter": {
+        "name": "John Doe",
+        "account": "ACCOUNT123456",
+        "phone": "+91-9876543210",
+        "pan": "ABCDE1234F"
+      },
+      "amount": 100000,
+      "timestamp": "2024-01-15T10:30:00Z"
+    },
+    {
+      "utr": "UTR987654321",
+      "remitter": {
+        "name": "Jane Smith",
+        "account": "ACCOUNT789012",
+        "phone": "+91-9876543211",
+        "pan": "FGHIJ5678K"
+      },
+      "amount": 25000,
+      "timestamp": "2024-01-15T12:00:00Z"
+    }
+  ],
+  "p2p_orders": [
+    {
+      "order_id": "P2P-ORDER-001",
+      "utr": "UTR123456789",
+      "buyer": {
+        "name": "Alice Crypto",
+        "email": "alice@example.com",
+        "phone": "+91-9876543210"
+      },
+      "withdrawal_wallet": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "amount_inr": 100000,
+      "crypto_amount": "0.5",
+      "crypto_currency": "ETH"
+    },
+    {
+      "order_id": "P2P-ORDER-002",
+      "utr": "UTR987654321",
+      "buyer": {
+        "name": "Bob Trader",
+        "email": "bob@example.com",
+        "phone": "+91-9876543211"
+      },
+      "withdrawal_wallet": "0x8ba1f109551bD432803012645Hac136c22C9C",
+      "amount_inr": 25000,
+      "crypto_amount": "0.125",
+      "crypto_currency": "ETH"
+    }
+  ],
+  "on_chain_transfers": [
+    {
+      "event_id": "synthetic-eth-0x742d35-1",
+      "chain": "eth",
+      "tx_hash": "0xabc123def4567890123456789012345678901234567890123456789012345678",
+      "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "to": "0x8ba1f109551bD432803012645Hac136c22C9C",
+      "amount": "0.3",
+      "token_symbol": "ETH",
+      "timestamp": "2024-01-15T14:00:00Z"
+    },
+    {
+      "event_id": "synthetic-eth-0x8ba1f1-1",
+      "chain": "eth",
+      "tx_hash": "0xdef456abc1237890123456789012345678901234567890123456789012345678",
+      "from": "0x8ba1f109551bD432803012645Hac136c22C9C",
+      "to": "0x1234567890123456789012345678901234567890",
+      "amount": "0.1",
+      "token_symbol": "ETH",
+      "timestamp": "2024-01-15T15:00:00Z"
+    }
+  ],
+  "bridge_events": [
+    {
+      "type": "lock",
+      "chain": "eth",
+      "tx_hash": "0xlock1234567890123456789012345678901234567890123456789012345678",
+      "from": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "bridge_contract": "0xBridgeContract1234567890123456789012345678",
+      "amount": "0.2",
+      "nonce": "NONCE-001",
+      "timestamp": "2024-01-15T16:00:00Z"
+    },
+    {
+      "type": "mint",
+      "chain": "bsc",
+      "tx_hash": "0xmint1234567890123456789012345678901234567890123456789012345678",
+      "to": "0xBSCWallet1234567890123456789012345678901234",
+      "bridge_contract": "0xBridgeContractBSC1234567890123456789012345678",
+      "amount": "0.2",
+      "nonce": "NONCE-001",
+      "timestamp": "2024-01-15T16:05:00Z"
+    }
+  ]
+}
+
