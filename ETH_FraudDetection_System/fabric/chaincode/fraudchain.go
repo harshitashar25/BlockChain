@@ -15,14 +15,17 @@ type FraudChainContract struct {
 
 // Case represents a fraud case
 type Case struct {
-	CaseID       string   `json:"case_id"`
-	EvidenceHash string   `json:"evidence_hash"`
-	Requester    string   `json:"requester"`
-	CreatedAt    string   `json:"created_at"`
-	Status       string   `json:"status"`
-	FreezeActive bool     `json:"freeze_active"`
-	Approvals    []string `json:"approvals"`
-	AssetRefs    []string `json:"asset_refs"`
+	CaseID           string   `json:"case_id"`
+	EvidenceHash     string   `json:"evidence_hash"`
+	Requester        string   `json:"requester"`
+	RequestedBy      string   `json:"requested_by"` // Alias for requester
+	CreatedAt        string   `json:"created_at"`
+	Status           string   `json:"status"`
+	FreezeActive     bool     `json:"freeze_active"`
+	Approvals        []string `json:"approvals"`
+	RequiredApprovals int     `json:"required_approvals"`
+	AssetRefs        []string `json:"asset_refs"`
+	Severity         string   `json:"severity"`
 }
 
 // SubmitEvidence submits evidence for a fraud case
@@ -37,14 +40,17 @@ func (s *FraudChainContract) SubmitEvidence(ctx contractapi.TransactionContextIn
 	}
 
 	caseObj := Case{
-		CaseID:       caseID,
-		EvidenceHash: evidenceHash,
-		Requester:    requester,
-		CreatedAt:    ctx.GetStub().GetTxTimestamp().String(),
-		Status:       "SUBMITTED",
-		FreezeActive: false,
-		Approvals:    []string{},
-		AssetRefs:    []string{},
+		CaseID:           caseID,
+		EvidenceHash:     evidenceHash,
+		Requester:        requester,
+		RequestedBy:      requester, // Alias
+		CreatedAt:        ctx.GetStub().GetTxTimestamp().String(),
+		Status:           "SUBMITTED",
+		FreezeActive:     false,
+		Approvals:        []string{},
+		RequiredApprovals: 3, // 3-of-3 approval required
+		AssetRefs:        []string{},
+		Severity:         "medium", // Default severity
 	}
 
 	caseJSON, err = json.Marshal(caseObj)
@@ -126,16 +132,27 @@ func (s *FraudChainContract) ApproveFreeze(ctx contractapi.TransactionContextInt
 	// Add approval
 	caseObj.Approvals = append(caseObj.Approvals, approver)
 
-	// Check if threshold reached (2-of-3 for PoC)
-	threshold := 2
+	// Check if threshold reached (3-of-3 for production)
+	threshold := caseObj.RequiredApprovals
+	if threshold == 0 {
+		threshold = 3 // Default to 3 if not set
+	}
+	
 	if len(caseObj.Approvals) >= threshold {
 		caseObj.FreezeActive = true
 		caseObj.Status = "FREEZE_ACTIVE"
 
 		// Emit FreezeActivated event
 		assetRefsJSON, _ := json.Marshal(caseObj.AssetRefs)
-		eventPayload := fmt.Sprintf(`{"case_id":"%s","asset_refs":%s,"event":"FreezeActivated"}`, caseID, string(assetRefsJSON))
+		eventPayload := fmt.Sprintf(`{"case_id":"%s","asset_refs":%s,"evidence_hash":"%s","event":"FreezeActivated"}`, caseID, string(assetRefsJSON), caseObj.EvidenceHash)
 		ctx.GetStub().SetEvent("FreezeActivated", []byte(eventPayload))
+	} else {
+		// Update status based on approval count
+		if len(caseObj.Approvals) == 1 {
+			caseObj.Status = "PENDING_APPROVAL"
+		} else {
+			caseObj.Status = "FREEZE_REQUESTED"
+		}
 	}
 
 	caseJSON, err = json.Marshal(caseObj)

@@ -14,16 +14,42 @@ function InvestigatorTrace() {
   const onTrace = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_BASE}/api/tracer/trace`, {
-        params: {
-          seed: values.seed,
+      const seed = values.seed;
+      
+      // Check if seed is a wallet address (starts with 0x or chain:)
+      const isWalletAddress = seed.startsWith('0x') || seed.startsWith('chain:');
+      
+      let result;
+      
+      if (isWalletAddress) {
+        // Extract address
+        const address = seed.startsWith('chain:') ? seed.replace('chain:', '') : seed;
+        
+        // Use Moralis to fetch real data and trace
+        // Use more lenient parameters for better results
+        const response = await axios.post(`${API_BASE}/api/moralis/trace-from-address`, {
+          address: address,
+          chain: 'eth',
           depth: values.depth || 6,
-          hours: values.hours || 48,
-          minAmt: values.minAmt || 100
-        }
-      });
-
-      const result = response.data.result;
+          hours: values.hours || 168, // 7 days instead of 48 hours
+          minAmt: Math.min(values.minAmt || 0.01, 0.01) // Lower threshold (0.01 ETH)
+        });
+        
+        result = response.data.trace;
+        message.success(`Fetched ${response.data.fetched} transfers from Moralis, ingested ${response.data.ingested}. Found ${result.total_paths} paths.`);
+      } else {
+        // Regular trace (assumes data already in graph)
+        const response = await axios.get(`${API_BASE}/api/tracer/trace`, {
+          params: {
+            seed: seed,
+            depth: values.depth || 6,
+            hours: values.hours || 168,
+            minAmt: values.minAmt || 0.01
+          }
+        });
+        result = response.data.result;
+        message.success(`Found ${result.total_paths} paths to exchange endpoints`);
+      }
       
       // Convert to graph format
       const nodes = result.nodes.map(node => ({
@@ -39,9 +65,13 @@ function InvestigatorTrace() {
       }));
 
       setGraphData({ nodes, links });
-      message.success(`Found ${result.total_paths} paths to exchange endpoints`);
+      
+      if (result.total_paths === 0) {
+        message.warning('No paths found. Try fetching data from Moralis first or use a different seed address.');
+      }
     } catch (error) {
       message.error('Failed to trace: ' + error.message);
+      console.error('Trace error:', error);
     } finally {
       setLoading(false);
     }
@@ -54,9 +84,12 @@ function InvestigatorTrace() {
         <Form form={form} layout="inline" onFinish={onTrace}>
           <Form.Item
             name="seed"
-            rules={[{ required: true, message: 'Enter seed actor ID' }]}
+            rules={[{ required: true, message: 'Enter wallet address or actor ID' }]}
           >
-            <Input placeholder="chain:0x742d35..." style={{ width: 300 }} />
+            <Input 
+              placeholder="0x742d35... or chain:0x742d35..." 
+              style={{ width: 350 }} 
+            />
           </Form.Item>
           <Form.Item name="depth" initialValue={6}>
             <Select style={{ width: 100 }}>
@@ -65,11 +98,13 @@ function InvestigatorTrace() {
               <Select.Option value={8}>Depth 8</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item name="hours" initialValue={48}>
-            <Select style={{ width: 120 }}>
+          <Form.Item name="hours" initialValue={168}>
+            <Select style={{ width: 140 }}>
               <Select.Option value={24}>24 hours</Select.Option>
               <Select.Option value={48}>48 hours</Select.Option>
               <Select.Option value={72}>72 hours</Select.Option>
+              <Select.Option value={168}>7 days</Select.Option>
+              <Select.Option value={336}>14 days</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item>

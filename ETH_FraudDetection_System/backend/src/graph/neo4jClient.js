@@ -1,12 +1,22 @@
 const neo4j = require('neo4j-driver');
 require('dotenv').config();
 
+// Use in-memory graph if Neo4j is not available
+const USE_MEMORY_GRAPH = process.env.USE_MEMORY_GRAPH === 'true' || !process.env.NEO4J_URI;
+
 /**
  * Neo4j Client for fraud trail graph database
  * Handles Actor nodes and SENT/BRIDGED relationships
+ * Falls back to in-memory graph if USE_MEMORY_GRAPH=true
  */
 class Neo4jClient {
   constructor() {
+    if (USE_MEMORY_GRAPH) {
+      // Use shared in-memory graph instance
+      const { getSharedGraph } = require('./sharedMemoryGraph');
+      return getSharedGraph();
+    }
+
     const uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
     const user = process.env.NEO4J_USER || 'neo4j';
     const password = process.env.NEO4J_PASSWORD || 'fraud-trail-password';

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layout, Menu } from 'antd';
 import Dashboard from './components/Dashboard';
 import BankReport from './components/BankReport';
+import LEADashboard from './components/LEADashboard';
 import LEAQueue from './components/LEAQueue';
 import InvestigatorTrace from './components/InvestigatorTrace';
 import EvidenceViewer from './components/EvidenceViewer';
@@ -15,6 +16,7 @@ function App() {
   const menuItems = [
     { key: 'dashboard', label: 'Dashboard' },
     { key: 'bank-report', label: 'Bank Report' },
+    { key: 'lea-dashboard', label: 'LEA Dashboard' },
     { key: 'lea-queue', label: 'LEA Queue' },
     { key: 'investigator-trace', label: 'Investigator Trace' },
     { key: 'evidence-viewer', label: 'Evidence Viewer' }
@@ -26,6 +28,8 @@ function App() {
         return <Dashboard />;
       case 'bank-report':
         return <BankReport />;
+      case 'lea-dashboard':
+        return <LEADashboard />;
       case 'lea-queue':
         return <LEAQueue />;
       case 'investigator-trace':

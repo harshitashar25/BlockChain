@@ -12,8 +12,7 @@ function BankReport() {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      // In production, would upload evidence file to MinIO and get URL
-      // For PoC, just submit the case
+      // Step 1: Submit case
       const response = await axios.post(`${API_BASE}/api/fabric/submit-evidence`, {
         caseId: values.caseId,
         evidenceHash: `hash-${Date.now()}`, // In production: actual SHA-256 hash
@@ -21,6 +20,38 @@ function BankReport() {
       });
 
       message.success(`Case ${values.caseId} submitted successfully`);
+
+      // Step 2: If UTR provided, automatically run trace to get asset references
+      if (values.utr) {
+        message.info('Running automated trace to get asset references...');
+        try {
+          const traceResponse = await axios.post(`${API_BASE}/api/automated-trace/utr-with-assets`, {
+            utr: values.utr,
+            chain: 'eth',
+            depth: 6,
+            hours: 168
+          });
+
+          if (traceResponse.data.asset_refs && traceResponse.data.asset_refs.length > 0) {
+            // Step 3: Update case with asset references
+            await axios.post(`${API_BASE}/api/freeze/request`, {
+              caseId: values.caseId,
+              evidenceHash: `hash-${Date.now()}`,
+              requestedBy: 'bank-user-001',
+              severity: 'high',
+              assetRefs: traceResponse.data.asset_refs
+            });
+
+            message.success(`✅ Trace completed! Found ${traceResponse.data.asset_refs.length} asset references. Case ready for freeze.`);
+          } else {
+            message.warning('Trace completed but no asset references found. You can add them manually later.');
+          }
+        } catch (traceError) {
+          message.warning('Could not run automated trace. You can run it manually from LEA Dashboard.');
+          console.error('Trace error:', traceError);
+        }
+      }
+
       form.resetFields();
     } catch (error) {
       message.error('Failed to submit case: ' + error.message);

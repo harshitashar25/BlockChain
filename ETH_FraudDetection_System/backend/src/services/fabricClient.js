@@ -58,11 +58,14 @@ class FabricClient {
       case_id: caseId,
       evidence_hash: evidenceHash,
       requester: requester,
+      requestedBy: requester, // Alias for compatibility
       created_at: new Date().toISOString(),
       status: 'SUBMITTED',
       freeze_active: false,
       approvals: [],
-      asset_refs: []
+      requiredApprovals: 3, // 3-of-3 approval required
+      asset_refs: [],
+      severity: 'medium' // Default severity
     };
 
     data.cases.push(caseObj);
@@ -116,8 +119,8 @@ class FabricClient {
 
     caseObj.approvals.push(approver);
 
-    // Check threshold (2-of-3 for PoC)
-    const threshold = 2;
+    // Check threshold (3-of-3 for production)
+    const threshold = caseObj.requiredApprovals || 3;
     if (caseObj.approvals.length >= threshold) {
       caseObj.freeze_active = true;
       caseObj.status = 'FREEZE_ACTIVE';
@@ -125,8 +128,16 @@ class FabricClient {
       // Emit FreezeActivated event
       await this._emitEvent('FreezeActivated', {
         case_id: caseId,
-        asset_refs: caseObj.asset_refs
+        asset_refs: caseObj.asset_refs,
+        evidence_hash: caseObj.evidence_hash
       });
+    } else {
+      // Update status to PENDING_APPROVAL if first approval
+      if (caseObj.approvals.length === 1) {
+        caseObj.status = 'PENDING_APPROVAL';
+      } else {
+        caseObj.status = 'FREEZE_REQUESTED';
+      }
     }
 
     fs.writeFileSync(this.storagePath, JSON.stringify(data, null, 2));

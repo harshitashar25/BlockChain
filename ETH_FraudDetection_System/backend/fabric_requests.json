@@ -9,6 +9,16 @@
       "freeze_active": false,
       "approvals": [],
       "asset_refs": []
+    },
+    {
+      "case_id": "CASE-2025-001",
+      "evidence_hash": "hash-1763586458791",
+      "requester": "bank-user-001",
+      "created_at": "2025-11-19T21:07:38.804Z",
+      "status": "SUBMITTED",
+      "freeze_active": false,
+      "approvals": [],
+      "asset_refs": []
     }
   ]
 }

@@ -1,4 +1,8 @@
 const Neo4jClient = require('../graph/neo4jClient');
+require('dotenv').config();
+
+// Use memory tracer if Neo4j is not available
+const USE_MEMORY_GRAPH = process.env.USE_MEMORY_GRAPH === 'true' || !process.env.NEO4J_URI;
 
 /**
  * Tracer - Priority-BFS path finding with pruning
@@ -7,6 +11,15 @@ const Neo4jClient = require('../graph/neo4jClient');
  */
 class Tracer {
   constructor() {
+    if (USE_MEMORY_GRAPH) {
+      // Use in-memory tracer with shared graph
+      const MemoryTracer = require('./memoryTracer');
+      const tracer = new MemoryTracer();
+      // Ensure tracer uses shared graph instance
+      const { getSharedGraph } = require('../graph/sharedMemoryGraph');
+      tracer.graph = getSharedGraph();
+      return tracer;
+    }
     this.neo4j = new Neo4jClient();
   }
 
@@ -71,10 +84,19 @@ class Tracer {
 
       // Check depth limit
       if (currentDepth >= depth) {
+        // At max depth, save the path even if not an exchange
+        if (path.length > 1) {
+          paths.push({
+            path: [...path],
+            endpoint: currentActor,
+            depth: currentDepth,
+            confidence: this._calculateConfidence(path, currentDepth)
+          });
+        }
         continue;
       }
 
-      // Check if we've reached an exchange endpoint
+      // Mark exchange endpoints but don't stop - continue exploring
       if (currentActor.startsWith('exchange:')) {
         exchangeEndpoints.add(currentActor);
         paths.push({
@@ -83,7 +105,7 @@ class Tracer {
           depth: currentDepth,
           confidence: this._calculateConfidence(path, currentDepth)
         });
-        continue; // Stop expanding from exchange nodes
+        // Continue exploring from exchanges too (they might send to other addresses)
       }
 
       // Get outgoing relationships
@@ -92,6 +114,17 @@ class Tracer {
         cutoffTime,
         minAmt
       );
+
+      // If no relationships found and we have a path, save it as a leaf
+      if (relationships.length === 0 && path.length > 1 && currentDepth > 0) {
+        paths.push({
+          path: [...path],
+          endpoint: currentActor,
+          depth: currentDepth,
+          confidence: this._calculateConfidence(path, currentDepth),
+          is_leaf: true
+        });
+      }
 
       for (const rel of relationships) {
         const nextActor = rel.to;

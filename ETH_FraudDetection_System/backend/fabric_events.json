@@ -9,6 +9,16 @@
       },
       "timestamp": "2025-11-19T19:09:22.858Z",
       "processed": true
+    },
+    {
+      "type": "FraudReported",
+      "payload": {
+        "case_id": "CASE-2025-001",
+        "evidence_hash": "hash-1763586458791",
+        "requester": "bank-user-001"
+      },
+      "timestamp": "2025-11-19T21:07:38.805Z",
+      "processed": true
     }
   ]
 }
